@@ -19,7 +19,7 @@ const Page = () => {
               <li>A user-friendly interface for easy navigation and asset management.</li>
               <li>Comprehensive support for various cryptocurrencies.</li>
           </ul>
-          <p className="mb-4">Our mission is to provide gamers with a reliable and innovative platform where they can maximize the value of their in-game assets. By integrating cryptocurrency payments, we offer a modern solution that meets the needs of today's digital economy.</p>
+          <p className="mb-4">Our mission is to provide gamers with a reliable and innovative platform where they can maximize the value of their in-game assets. By integrating cryptocurrency payments, we offer a modern solution that meets the needs of digital economy.</p>
           <p>Join Pergamer today and be part of the future of in-game asset trading.</p>
       </section>
   </div>
