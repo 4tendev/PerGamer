@@ -1,0 +1,14 @@
+{
+    "market": {
+        "en": "Market",
+        "fa": "فروشگاه"
+    },
+    "sell": {
+        "en": "Sell Item",
+        "fa": "فروش آیتم"
+    },
+    "aboutus": {
+        "en": "About us",
+        "fa": "درباره ما"
+    }
+}
