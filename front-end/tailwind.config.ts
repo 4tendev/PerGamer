@@ -30,5 +30,4 @@ const config: Config = {
     themeRoot: ":root",
   },
 };
-export type Theme = "dark"|"light"
 export default config;

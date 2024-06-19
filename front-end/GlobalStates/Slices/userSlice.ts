@@ -3,12 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export type UserSliceState = {
   isKnown: boolean | undefined;
-  totpActivated: boolean;
+  SESSIONID : string
 };
 
 const initialState: UserSliceState = {
   isKnown: undefined,
-  totpActivated: false,
+  SESSIONID : ""
 };
 
 export const userSlice = createSlice({

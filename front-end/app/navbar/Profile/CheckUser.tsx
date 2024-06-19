@@ -1,37 +1,38 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { useAppDispatch } from "@/GlobalStates/hooks";
-import { newUserState } from "@/GlobalStates/Slices/userSlice";
+import { useAppDispatch, useAppSelector } from "@/GlobalStates/hooks";
+import { newUserState, user } from "@/GlobalStates/Slices/userSlice";
 
 import { fetchapi } from "@/commonTsBrowser/fetchAPI";
 
 import Profile from "./Profile";
+import setCookie from "@/commonTsBrowser/setCookie";
 const CheckUser = () => {
-  const setUserIsKnow = useAppDispatch();
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(user)
   const [isUserChecked , setIsUserChecked]  = useState<undefined | boolean>(undefined);
 
   function checkUser() {
     setIsUserChecked(undefined);
     fetchapi("/user/", "GET")
       .then((response) => {
-        setUserIsKnow(newUserState(response.data));
+        dispatch(newUserState(response.data));
         if (response.code ==="500") {
           setIsUserChecked(false)
          
         }else{
           setIsUserChecked(true);
         }
-       
-
       })
       .catch((reasson) =>{  setIsUserChecked(false)});
   }
 
   useEffect(() => {
-    checkUser();
+    currentUser.isKnown == undefined && checkUser();
+    currentUser.isKnown == true ? setCookie("SESSIONID" , currentUser.SESSIONID ) : setCookie("SESSIONID" , "",500)
     return () => {};
-  }, []);
+  }, [user]);
 
   return isUserChecked === undefined ? (
     <span className="loading loading-ring loading-xs"></span>

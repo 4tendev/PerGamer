@@ -11,7 +11,7 @@ import Lougout from "./Logout/Lougout";
 import ProfileImage from "../ProfileImage";
 import TextSVG from "./TextSVG";
 
-import {  menuList } from "@/app/user/UserMenu";
+import { menuList } from "@/app/user/UserMenu";
 
 export default function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,14 +44,13 @@ export default function UserProfile() {
     <div className="dropdown dropdown-end ">
       <div className="h-full flex items-center relative">
         <ProfileImage onClick={() => setIsOpen(true)} />
-       
       </div>
 
       {isOpen && (
         <ul
           ref={dropdownRef}
           tabIndex={0}
-          className="dropdown-content  shadow-lg z-[1] mt-3 py-1  bg-base-200  w-52"
+          className="dropdown-content  z-[1] mt-2 py-1  bg-black  w-52"
         >
           {menuList(lang).map((item) => (
             <li key={item.text} className={liClassName}>

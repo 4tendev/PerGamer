@@ -1,10 +1,3 @@
-"use client"
-
-
-export default function Home() {
-  return (
-    <div className="h-full ">
-
-    </div>
-  );
+export default async function Home() {
+  return <div className="h-full "></div>;
 }

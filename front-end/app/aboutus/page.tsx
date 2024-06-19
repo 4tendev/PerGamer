@@ -6,7 +6,7 @@ const Page = () => {
   const lang = getLanguage().lang;
   return lang == "fa" ? <PersianAbbout /> :     <div className="container mx-auto px-4">
   <div className=" my-3">
-      <header className="text-center mb-8">
+      <header className="text-center mb-2">
           <h1 className="text-4xl font-bold ">About Us</h1>
       </header>
       <section className="">

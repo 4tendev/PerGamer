@@ -1,7 +1,10 @@
 {
-    "logout" : {"en" : "Logout" , "fa" :"خروج"},
-    "logedout" : {"en" : "Loged Out" , "fa" :"خروج موفق"}
-
-
-
+    "logout": {
+        "en": "Logout",
+        "fa": "خروج"
+    },
+    "logedout": {
+        "en": "Loged Out",
+        "fa": "خروج موفق"
+    }
 }

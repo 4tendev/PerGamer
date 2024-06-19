@@ -4,9 +4,10 @@ import getCookie from "@/commonTsBrowser/getCookie";
 import setCookie from "@/commonTsBrowser/setCookie";
 import config from "@/tailwind.config";
 import { THEME_COOKIE_NAME } from "@/settings";
+import { Theme } from "daisyui";
 
-const Theme = () => {
-  const [theme, setTheme] = useState<"light" | "night" | undefined>(undefined);
+const Themes = () => {
+  const [theme, setTheme] = useState<Theme | undefined>(undefined);
 
   const acceptableTheme = config.daisyui.themes;
 
@@ -36,7 +37,7 @@ const Theme = () => {
       <label className="swap swap-rotate  p-2">
         <input
           type="checkbox"
-          checked={theme !== "light"}
+          checked={theme == acceptableTheme[0]}
           onChange={swapTheme}
         />
 
@@ -60,4 +61,4 @@ const Theme = () => {
   );
 };
 
-export default Theme;
+export default Themes;

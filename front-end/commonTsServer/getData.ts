@@ -1,4 +1,3 @@
-"use server";
 import { BACKEND_LOCAL_URL } from "@/settings";
 export default async function getData(
   endpoint: string,
