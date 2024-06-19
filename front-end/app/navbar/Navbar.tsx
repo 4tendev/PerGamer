@@ -18,7 +18,7 @@ const Navbar = () => {
           <LinkSvg svg={navbarSvges().wallet} link="/user/wallet" />
           <LinkSvg svg={navbarSvges().shoppingCard} link="/user/checkout" />
         </div>
-        <ul className="flex  text-xs sm:static fixed left-0 bottom-0 w-full sm:w-fit justify-center h-8 sm:h-14 items-center sm:gap-5 bg-black text-white  shadow-2xl ">
+        <ul className="flex  text-xs sm:static fixed left-0 bottom-0 w-full sm:w-fit justify-center h-8 sm:h-14 items-center sm:gap-5 bg-black text-white ">
           <LinkNameSvg
             svg={navbarSvges().sell}
             link="/user/store"
