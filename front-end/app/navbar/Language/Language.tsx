@@ -23,7 +23,9 @@ const Language = () => {
   useEffect(() => {
     getCookie(LANGUAGES_COOKIE_NAME)
       ? dispatch(selectedLanguage(getLanguage()))
-      : document.getElementById("languageModal")?.setAttribute("class" , "modal modal-open")  ;
+      : document
+          .getElementById("languageModal")
+          ?.setAttribute("class", "modal modal-open");
     return () => {};
   }, []);
 
@@ -35,7 +37,7 @@ const Language = () => {
         </div>
         <ul
           tabIndex={0}
-          className="dropdown-content z-[1] menu p-1 px-0 mt-2 bg-black "
+          className="dropdown-content z-[1] menu p-0 px-0  bg-black "
         >
           {SUPPORTED_LANGUAGES.map((language) => (
             <li
@@ -53,12 +55,19 @@ const Language = () => {
       <dialog id="languageModal" className="modal">
         <div className="modal-box">
           <div className="flex justify-between">
-            <h3 dir="ltr" className="font-bold text-lg">Wellcome !</h3>
-            <h3 dir="rtl" className="font-bold text-lg">خوش آمدید !</h3>
+            <h3 dir="ltr" className="font-bold text-lg">
+              Wellcome !
+            </h3>
+            <h3 dir="rtl" className="font-bold text-lg">
+              خوش آمدید !
+            </h3>
           </div>
 
-          <div dir="ltr" className="py-4 flex justify-center gap-3 text-xs items-center">
-          Please Choose Your preference language{" "}
+          <div
+            dir="ltr"
+            className="py-4 flex justify-center gap-3 text-xs items-center"
+          >
+            Please Choose Your preference language{" "}
             <button
               dir={SUPPORTED_LANGUAGES[0].dir}
               key={SUPPORTED_LANGUAGES[0].lang}
