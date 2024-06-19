@@ -37,7 +37,7 @@ export default async function RootLayout({
   return (
     <StoreProvider >
       <html lang={lang}  dir={direction}  data-theme={theme} className=" h-screen  mx-auto ">
-        <body className={(direction ==="ltr" ?   myPoppinsFont.className  : (myVazirFont.className +" w-[99vw] "))  +  " w-full h-full pt-14 sm:pb-0  pb-10  bg-base-100" } >
+        <body className={(direction ==="ltr" ?   myPoppinsFont.className  : (myVazirFont.className +" w-[99vw] "))  +  " w-full h-full pt-14 sm:pb-0  pb-8  bg-base-100" } >
           <GlobalAlert />
           <Navbar />
           <div className="h-full w-full overflow-auto">
