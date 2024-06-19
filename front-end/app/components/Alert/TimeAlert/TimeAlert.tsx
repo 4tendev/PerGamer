@@ -22,7 +22,7 @@ const TimeAlert = (props: { timeAlert: TimeAlertProp }) => {
     <div
       role="alert"
       className={
-        "w-full sm:max-w-fit max-sm:rounded-none flex justify-center h-fit left-1/2 -translate-x-1/2 px-5 p-2 fixed gap-2 alert shadow-xl changeBrightness z-50 " +
+        "w-full sm:max-w-fit max-sm:rounded-none flex justify-center h-fit  left-1/2 -translate-x-1/2 px-5 p-2 fixed gap-2 alert shadow-xl changeBrightness z-50 " +
         alertDetailFromMode(props.timeAlert.mode).className
       }
     >
