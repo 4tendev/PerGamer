@@ -11,7 +11,7 @@ from core.settings import SESSION_COOKIE_NAME
 from .forms import LoginForm, RegisterForm, ResetPasswordForm, ChangePasswordForm
 from .models import User
 
-from .EmailOTP import createCode, checkCode
+from .OTP import createCode, checkCode
 
 
 def emailOrMobileInput(group, request):
@@ -35,8 +35,8 @@ def userData(user: User):
     } if user.is_authenticated else unKnownUserData
 
 
-@ratelimit(key=emailOrMobileInput, method=['PATCH'], block=False, rate='45/d')
-@ratelimit(key=emailOrMobileInput, method=['PATCH'], block=False, rate='15/m')
+@ratelimit(key=emailOrMobileInput, method=['PATCH'], block=False, rate='5/d')
+@ratelimit(key=emailOrMobileInput, method=['PATCH'], block=False, rate='5/m')
 @ratelimit(key=userID, method=['PUT'], block=False, rate='10/d')
 def auth(request):
     user = request.user
@@ -71,10 +71,10 @@ def auth(request):
             if not form.is_valid():
                 return JsonResponse(data)
             emailOrMobile = form.cleaned_data.get("emailOrMobile").lower()
-            mobileCode = form.cleaned_data.get("mobileCode")
+            emailOrMobileCode = form.cleaned_data.get(
+                "emailOrMobileCode") or None
             password = form.cleaned_data.get("password")
             trustedDevice = form.cleaned_data.get("trustedDevice") or None
-            emailCode = form.cleaned_data.get("emailCode") or None
             user = User.objects.filter(
                 Q(email=emailOrMobile) | Q(mobile=emailOrMobile)
             )
@@ -83,19 +83,26 @@ def auth(request):
                 return JsonResponse(data)
 
             if getattr(request, 'limited', False):
-                VERIFY_FOR_LOGIN = "LOGIN"
-                if not emailCode:
-
-                    timeRemaining = createCode(
-                        email, VERIFY_FOR_LOGIN)
+                VERIFY_FOR_LOGIN = "Login"
+                if not emailOrMobileCode:
                     data = {
-                        "code": "429",
-                                "data": {"timeRemaining": timeRemaining, },
-                                "message": "to many tries ,Code Sent"
+                        "code": "500"
                     }
-                    return JsonResponse(data)
+                    timeRemaining = createCode(
+                        emailOrMobile, VERIFY_FOR_LOGIN)
+                    if timeRemaining == False:
+                        return JsonResponse({"code": "4291"})
+                    if timeRemaining > 0:
+                        data = {
+                            "code": "429",
+                                    "message": "to many tries ,Code Sent",
+                                    "data": {
+                                        "timeRemaining": timeRemaining
+                                    }
+                        }
+                        return JsonResponse(data)
                 isCodeAcceptable = checkCode(
-                    email, VERIFY_FOR_LOGIN, emailCode)
+                    emailOrMobile, VERIFY_FOR_LOGIN, emailOrMobileCode)
                 if not isCodeAcceptable:
                     if isCodeAcceptable is None:
                         data = {
@@ -104,7 +111,7 @@ def auth(request):
                         }
                     elif isCodeAcceptable is False:
                         data = {
-                            "code": "4291",
+                            "code": "4292",
                             "message": "Wrong emailCode Code"
                         }
                     return JsonResponse(data)
@@ -272,7 +279,7 @@ def auth(request):
             "message": "Server Error"
         }
 
-    if user.is_authenticated:
+    if request.user.is_authenticated:
         data["data"][SESSION_COOKIE_NAME] = request.session.session_key
 
     return JsonResponse(data)
