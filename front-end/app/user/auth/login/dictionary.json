@@ -1,0 +1,27 @@
+{
+    "login": {
+        "en": "Login",
+        "fa": "ورود"
+    },
+    "400": {
+        "en": "No user found.",
+        "fa": "کاربری پیدا نشد."
+    },
+    "200": {
+        "en": "Logged Successfully.",
+        "fa": "ورود موفق."
+    },
+    "4290": {
+        "en": "Ask new verification code.",
+        "fa": "درخواست کد جدید بدهید."
+    },
+    "4291": {
+        "en": "You can't login for a day.",
+        "fa": "برای یک روز امکان ورود شما وجود ندارد."
+    }
+    ,
+    "4292": {
+        "en": "Wrong Code.",
+        "fa": "کد تایید نامعتبر."
+    }
+}
