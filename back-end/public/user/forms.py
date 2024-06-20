@@ -20,14 +20,14 @@ class LoginForm(forms.Form):
 class RegisterForm(forms.Form):
     password = passwordField
     email = emailField
-    emailCode = CodeField
+    emailOrMobileCode = CodeField
     trustedDevice = trustedDeviceField
 
 
 class ResetPasswordForm(forms.Form):
-    email = emailField
+    emailOrMobile = emailOrMobileField
     newPassword = forms.CharField(max_length=100, min_length=8, required=False)
-    emailCode = CodeField
+    emailOrMobileCode = CodeField
 
 
 class ChangePasswordForm(forms.Form):

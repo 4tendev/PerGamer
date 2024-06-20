@@ -4,11 +4,11 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 class CustomUserManager(BaseUserManager):
 
-    def create_user(self,mobileNumber=None, email=None, password=None, **extra_fields):
-        if not email and not mobileNumber:
+    def create_user(self,mobile=None, email=None, password=None, **extra_fields):
+        if not email and not mobile:
             raise ValueError('The Email or mobile field must be set')
         email = self.normalize_email(email) if email else None
-        user = self.model(email=email,mobileNumber=mobileNumber, **extra_fields)
+        user = self.model(email=email,mobile=mobile, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user

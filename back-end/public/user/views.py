@@ -154,11 +154,11 @@ def auth(request):
                         "message": "Email already exist"
                     }
                     return JsonResponse(data)
-                emailCode = form.cleaned_data.get(
-                    "emailCode")
-                if emailCode:
+                emailOrMobileCode = form.cleaned_data.get(
+                    "emailOrMobileCode")
+                if emailOrMobileCode:
                     isCodeAcceptable = checkCode(
-                        email, User.VERIFY_FOR_REGISTER, emailCode)
+                        email, User.VERIFY_FOR_REGISTER, emailOrMobileCode)
                     if isCodeAcceptable:
                         user = User.objects.create_user(
                             password=password, email=email)
@@ -181,6 +181,19 @@ def auth(request):
                             "code": "4004",
                             "message": "Wrong VERIFICATION Code"
                         }
+                else:
+                    data = {
+                        "code": "500",
+                                "message": "Server Error"
+                    }
+                    timeRemaining = createCode(
+                        email,  User.VERIFY_FOR_REGISTER)
+                    if timeRemaining:
+                        data = {
+                            "code": "201",
+                            "data": {"timeRemaining": timeRemaining, },
+                            "message": "Code Sent"
+                        }
         elif method == "OPTIONS":
             RESET_PASSWROD = "ResetPassword"
             form_data = json.loads(request.body)
@@ -191,21 +204,21 @@ def auth(request):
             }
             if not form.is_valid():
                 return JsonResponse(data)
-            email = form.cleaned_data.get("email")
-            user = User.objects.filter(
-                email=email)
+            emailOrMobile = form.cleaned_data.get("emailOrMobile")
+            user = User.objects.filter(Q(email=emailOrMobile) | Q(mobile=emailOrMobile)
+                                       )
             if not user:
                 data = {
                     "code": "4001",
                     "message": "No USER FOUND"
                 }
                 return JsonResponse(data)
-            emailCode = form.cleaned_data.get("emailCode")
+            emailOrMobileCode = form.cleaned_data.get("emailOrMobileCode")
             newPassword = form.cleaned_data.get("newPassword")
             trustedDevice = form.cleaned_data.get("trustedDevice") or False
-            if emailCode:
+            if emailOrMobileCode:
                 isCodeAcceptable = checkCode(
-                    email, RESET_PASSWROD, emailCode)
+                    emailOrMobile, RESET_PASSWROD, emailOrMobileCode)
                 if isCodeAcceptable:
                     if not newPassword:
                         return JsonResponse({"code": "400", "message": "INVALID INPUTS"})
@@ -217,7 +230,7 @@ def auth(request):
                     data = {
                         "code": "200",
                         "message": "Password Changed",
-                        data: userData(user)
+                        "data": userData(user)
                     }
                     if not trustedDevice:
                         request.session.set_expiry(0)
@@ -231,6 +244,19 @@ def auth(request):
                     data = {
                         "code": "4004",
                         "message": "Wrong VERIFICATION Code"
+                    }
+            else:
+                data = {
+                    "code": "500",
+                            "message": "Server Error"
+                }
+                timeRemaining = createCode(
+                    emailOrMobile, RESET_PASSWROD)
+                if timeRemaining:
+                    data = {
+                        "code": "201",
+                        "data": {"timeRemaining": timeRemaining, },
+                        "message": "Code Sent"
                     }
         elif method == "PUT":
             if getattr(request, 'limited', False):
