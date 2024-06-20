@@ -1,0 +1,38 @@
+{
+    "minute": {
+        "en": "minutes",
+        "fa": "دقیقه"
+    },
+    "verificationSent": {
+        "en": "Verification",
+        "fa": "کد تایید"
+    },
+    "verificationSentMessage": {
+        "en": "We just sent you a code.",
+        "fa": "یک  کد تایید ارسال شد."
+    },
+    "seccond": {
+        "en": "secconds",
+        "fa": "ثانیه"
+    },
+    "dismiss": {
+        "en": "Dismiss",
+        "fa": "منصرف شدم"
+    },
+    "verify": {
+        "en": "Verify",
+        "fa": "تایید"
+    },
+    "code": {
+        "en": "Code",
+        "fa": "کد تایید "
+    },
+    "required": {
+        "en": "Required",
+        "fa": "لازم"
+    },
+    "6digit": {
+        "en": "6 Digit",
+        "fa": "6 رقمی"
+    }
+}
