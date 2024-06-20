@@ -99,6 +99,7 @@ const VerificationModal = (props: {
         </div>
         <div className="flex flex-col gap-3 w-full">
           <input
+          autoFocus
             value={code}
             onChange={changeInput}
             onKeyDown={(event) => {

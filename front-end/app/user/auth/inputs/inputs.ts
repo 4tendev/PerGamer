@@ -1,7 +1,7 @@
 import { Lang } from "@/GlobalStates/Slices/languageSlice";
 import dictionary from "./dictionary.json";
 import { Input } from "@/app/UseForm/UseFormTemplate";
-
+ 
 export function passwordInput(lang: Lang): Input {
   return {
     type: "password",
@@ -20,7 +20,15 @@ export function trustedDeviceInput(lang: Lang): Input {
     type: "checkbox",
     placeHolder: dictionary["trustedDevice"][lang],
     name: "trustedDevice",
-    validations: { required: false },
+  };
+}
+
+export function acceptRulesInput(lang: Lang): Input {
+  return {
+    type: "checkbox",
+    placeHolder: dictionary["acceptRules"][lang],
+    name: "acceptRule",
+    validations: { required: true },
     validationsMSG: {
       required: dictionary["required"][lang],
     },
@@ -75,20 +83,7 @@ export function emailCodeInput(lang: Lang): Input {
     },
   };
 }
-export function totpCodeInput(lang: Lang): Input {
-  return {
-    autoFocus: true,
-    type: "number",
-    placeHolder: dictionary["TOTPCode"][lang],
-    name: "TOTPCode",
-    validations: { required: true, maxLength: 6, minLength: 6 },
-    validationsMSG: {
-      required: dictionary["required"][lang],
-      maxLength: dictionary["sixDigit"][lang],
-      minLength: dictionary["sixDigit"][lang],
-    },
-  };
-}
+
 
 export function repeatPasswordInput(lang: Lang): Input {
   const repeatPasswordInput = passwordInput(lang);

@@ -25,6 +25,7 @@
     
     "emailFormatError" : {"en" : "Valid Email adress" , "fa" :"آدرس ایمل صحیح"},
     "sixDigit" : {"en" : "6 Digit" , "fa" :"6 رقمی"}
-    ,"TOTPCode" : {"en" : "TOTP Code" , "fa" :"رمز زمانی"}
+    ,"acceptRules" : {"en" : "i accept PerGamer Terms and Conditions" , "fa" :"قوانین ومقرارات پرگیمر را  می پذیرم."}
+
     
 }
