@@ -84,7 +84,7 @@ const UseFormTemplate = (props: {
         onSubmit={handleSubmit(onSubmit)}
         className={`card-body h-full  justify-between  p-0 w-full pb-14 sm:pb-0`}
       >
-        <div className="overflow-auto sm:px-1 px-5 ">
+        <div className="overflow-auto sm:px-1">
           {form.inputs.map((input, index) => (
             <div key={index} className="my-2">
               {inputSelector(input)}

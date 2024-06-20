@@ -35,9 +35,9 @@ def userData(user: User):
     } if user.is_authenticated else unKnownUserData
 
 
-@ratelimit(key=emailOrMobileInput, method=['PATCH'], block=False, rate='5/d')
+@ratelimit(key=emailOrMobileInput, method=['PATCH'], block=False, rate='15/d')
 @ratelimit(key=emailOrMobileInput, method=['PATCH'], block=False, rate='5/m')
-@ratelimit(key=userID, method=['PUT'], block=False, rate='10/d')
+@ratelimit(key=userID, method=['PUT'], block=False, rate='6/d')
 def auth(request):
     user = request.user
 
