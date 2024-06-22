@@ -15,7 +15,9 @@ import { newAlert } from "@/GlobalStates/Slices/alert/Slice";
 import { fetchapi } from "@/commonTsBrowser/fetchAPI";
 import { isKnown } from "@/GlobalStates/Slices/userSlice";
 import Auth from "../auth/page";
+import { useRouter } from "next/navigation";
 const Page = () => {
+  const router = useRouter();
   const userisKnown = useAppSelector(isKnown);
   const lang = useAppSelector(language).lang;
   const setGlobalState = useAppDispatch();
@@ -46,7 +48,7 @@ const Page = () => {
     await fetchapi("/user/", "PUT", data).then((response) => {
       const code = response.code;
       const mode = code.substring(0, 1) === "2" ? "success" : "warning";
-
+      code =="200" && router.push("/user")
       setGlobalState(
         newAlert({
           message: responseMessageFinder(dictionary, lang, code),
