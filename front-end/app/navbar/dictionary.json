@@ -1,11 +1,11 @@
 {
     "market": {
-        "en": "Market",
-        "fa": "فروشگاه"
+        "en": "Buy",
+        "fa": "خرید"
     },
     "sell": {
-        "en": "Sell Item",
-        "fa": "فروش آیتم"
+        "en": "Sell",
+        "fa": "فروش "
     },
     "aboutus": {
         "en": "About us",
