@@ -1,3 +1,13 @@
-export default async function Home() {
-  return <div className="h-full "></div>;
-}
+import React from 'react';
+
+
+const HtmlRenderer = () => {
+  return (
+    <div className=''>
+
+    </div>
+
+  );
+};
+
+export default HtmlRenderer;
