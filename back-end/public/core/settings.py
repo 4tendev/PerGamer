@@ -31,6 +31,7 @@ INTERNAL_HOST = os.getenv("INTERNAL_HOST")
 DEFAULT_PROXY_USERNAME = os.getenv("DEFAULT_PROXY_USERNAME")
 DEFAULT_PROXY_PASSWORD = os.getenv("DEFAULT_PROXY_PASSWORD")
 DEFAULT_PROXY_URL = os.getenv("DEFAULT_PROXY_URL")
+PRIVATE_BACK_END_HOST = os.getenv("PRIVATE_BACK_END_HOST")
 
 PROXY = {
     'https': f'http://{DEFAULT_PROXY_USERNAME}:{ DEFAULT_PROXY_PASSWORD}@{DEFAULT_PROXY_URL}'} if DEFAULT_PROXY_URL else None
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "user",
+    "market"
 ]
 
 
