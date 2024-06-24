@@ -26,7 +26,7 @@ const Navbar = () => {
           />
           <LinkNameSvg
             svg={navbarSvges().market}
-            link="/user/store"
+            link="/market"
             text={dictionary.market[lang]}
           />
           <LinkNameSvg
