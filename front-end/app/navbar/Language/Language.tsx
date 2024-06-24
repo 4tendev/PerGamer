@@ -32,28 +32,22 @@ const Language = () => {
   return (
     <>
       <div className="dropdown">
-        <div tabIndex={0} role="button" className="  p-2 ">
+        <div
+          tabIndex={0}
+          role="button"
+          className="  p-2 "
+          onClick={() =>
+            document
+              .getElementById("languageModal")
+              ?.setAttribute("class", "modal modal-open")
+          }
+        >
           {NavbarSvges().language}
         </div>
-        <ul
-          tabIndex={0}
-          className="dropdown-content z-[1] menu p-0 px-0  bg-black "
-        >
-          {SUPPORTED_LANGUAGES.map((language) => (
-            <li
-              dir={language.dir}
-              key={language.lang}
-              onClick={() => ChangeLanguage(language)}
-              className="text-center rounded-none"
-            >
-              <small>{language.text}</small>
-            </li>
-          ))}
-        </ul>
       </div>
       {/* Open the modal using document.getElementById('ID').showModal() method */}
-      <dialog id="languageModal" className="modal">
-        <div className="modal-box">
+      <dialog id="languageModal" className="modal z-100">
+        <div className="modal-box bg-black">
           <div className="flex justify-between">
             <h3 dir="ltr" className="font-bold text-lg">
               Wellcome !
