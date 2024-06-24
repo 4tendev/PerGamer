@@ -72,6 +72,7 @@ class ProductsForm(forms.Form):
     deliveryMethod = forms.IntegerField(required=False)
     tradeableAt = forms.DateField( required=False)
     status = forms.ChoiceField( choices=Product.stats, required=False)
+    detailID__in= forms.JSONField(required=False)
 
     def clean(self):
         cleaned_data = super().clean()

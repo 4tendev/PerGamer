@@ -25,6 +25,7 @@ def products(request):
 
         offset = request.GET.get("offset") or 0
         offset = int(offset)
+        limit=200 if form.cleaned_data.get("detailID__in") else 100
 
         data = {
             "code": "200",
@@ -32,7 +33,7 @@ def products(request):
 
         }
         products = Product.objects.filter(
-            **form.cleaned_data)[offset:offset + 100]
+            **form.cleaned_data)[offset:offset + limit]
         if products:
             for product in products:
                 data["data"].append(

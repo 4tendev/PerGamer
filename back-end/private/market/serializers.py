@@ -11,7 +11,8 @@ def productData(product: Product):
         "asset": product.creatorShare.asset.name,
         "descriptions": product.descriptions,
         "tradeableAt": product.tradeableAt,
-        "deliveryMethod": product.deliveryMethod
+        "deliveryMethod": product.deliveryMethod,
+        "detailID" : product.detailID
 
     }
 
