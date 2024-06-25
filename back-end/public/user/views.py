@@ -1,16 +1,20 @@
 import json
+import re
+import requests
 
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.db.models import Q
 
 from django_ratelimit.decorators import ratelimit
+from django.core.cache import cache
 
-from core.settings import SESSION_COOKIE_NAME
+from core.settings import SESSION_COOKIE_NAME, PRIVATE_BACK_END_HOST
+from market.models import Detail, Tag, acceptedPlatforms
+from market.serializers import detailData
 
 from .forms import LoginForm, RegisterForm, ResetPasswordForm, ChangePasswordForm
 from .models import User
-
 from .OTP import createCode, checkCode
 
 
@@ -308,4 +312,147 @@ def auth(request):
     if request.user.is_authenticated:
         data["data"][SESSION_COOKIE_NAME] = request.session.session_key
 
+    return JsonResponse(data)
+
+
+def get_valid_filename(filename):
+    # Replace any illegal characters with an underscore
+    filename = re.sub(r'[^a-zA-Z0-9._-]', '_', filename)
+    # Truncate the file name if it is too long
+    if len(filename) > 255:
+        filename = filename[:255]
+    return filename
+
+
+def process_assets(asset_list, appid):
+    target_list = []
+    for asset in asset_list:
+        try:
+            assetid = asset["assetid"]
+            name = asset["market_hash_name"]
+            tags = asset["tags"]
+            cache_key = f"detail_{get_valid_filename(name)}_{appid}"
+            detailId = cache.get(cache_key)
+            if detailId is None:
+                detail = Detail.objects.filter(title=name, appid=appid)
+                if detail:
+                    detailId = detail[0].id
+                    cache.set(cache_key, detailId, timeout=864000)
+            if not detailId:
+                imagename = get_valid_filename(asset["market_hash_name"])
+                descriptions = asset.get("descriptions", [])
+                if asset["icon_url"] and asset["icon_url_large"]:
+                    image_url = 'https://community.cloudflare.steamstatic.com/economy/image/' + \
+                        asset["icon_url"]
+                    image_big_url = 'https://community.cloudflare.steamstatic.com/economy/image/' + \
+                        asset["icon_url_large"]
+                else:
+                    continue
+                newDetail = Detail.objects.create(
+                    imageURL=image_url, imageBigURL=image_big_url, imageName=imagename, title=name, appid=appid, descriptions=descriptions)
+                try:
+                    for tag in tags:
+                        tag_name = tag["localized_category_name"]
+                        tag_value = tag["localized_tag_name"]
+
+                        tag_instance = Tag.objects.get_or_create(
+                            name=tag_name, value=tag_value, appid=appid)
+                        newDetail.tags.add(tag_instance[0])
+                    detailId = newDetail.id
+                except Exception as e:
+                    newDetail.delete()
+                    continue
+            target_list.append({"assetId":  assetid, "tradable": asset["marketable"], "title": asset["market_hash_name"], "imageURL": (
+                'https://community.cloudflare.steamstatic.com/economy/image/' + asset["icon_url"]), "detailID": detailId})
+        except Exception as e:
+            print(e)
+            continue
+    return target_list
+
+
+def inventory(request):
+    user = request.user
+    if not user.canSell:
+        data = {
+            "code": "400"
+        }
+        return JsonResponse(data)
+    method = request.method
+    if method == "GET":
+        cache_key = user.id64 + "INVENTORY"
+        invetories = cache.get(cache_key)
+        if invetories is not None:
+            data = {
+                "code": "200",
+                "invetories": invetories
+            }
+            return JsonResponse(data)
+        invetories = []
+        for platform in acceptedPlatforms:
+            appid = platform[0]
+            platformInvetoris = {
+                "tradeableAssets": [], "notTradeableAssets": []}
+            url = (
+                f'''https://api.steampowered.com/IEconService/GetInventoryItemsWithDescriptions/v1/?key={user.steamAPIKey}&steamid={user.id64}&appid={appid}&contextid=2&get_descriptions=true''')
+            try:
+                response = requests.get(url=url)
+                assets = response.json()
+                assets = assets["response"]
+                descriptions = assets["descriptions"]
+                assets = assets["assets"]
+                for item1 in assets:
+                    for item2 in descriptions:
+                        if item1['classid'] == item2['classid'] and item1['instanceid'] == item2['instanceid']:
+                            item1.update(item2)
+                            break
+                notTradeableAssets = [
+                    item for item in assets if item['marketable'] != 1]
+                tradeableAssets = [
+                    item for item in assets if item['tradable'] == True]
+                platformInvetoris["notTradeableAssets"] = process_assets(
+                    notTradeableAssets, appid)
+                platformInvetoris["tradeableAssets"] = process_assets(
+                    tradeableAssets, appid)
+                invetories.append({platform[1]: platformInvetoris})
+            except Exception as e:
+                print(e)
+                continue
+        cache.set(cache_key, invetories, 600)
+        data = {
+            "code": "200",
+            "invetories": invetories
+        }
+        return JsonResponse(data)
+
+
+def store(request):
+    user = request.user
+    if not user.canSell:
+        data = {
+            "code": "400"
+        }
+        return JsonResponse(data)
+    method = request.method
+    if method == "GET":
+        creatorID = user.id
+        response = requests.get(
+            f"{PRIVATE_BACK_END_HOST}/market/products/?creatorID={creatorID}")
+        products = response.json()["data"]
+        data = {
+            "code": "200",
+            "data": {"details": [],
+                     "products": []
+                     }
+        }
+        if len(products):
+            detailsID = set([product.detailID for product in products])
+            for product in products:
+                data["data"]["products"].append(
+                    product
+                )
+            details = Detail.objects.filter(id__in=[detailsID])
+            for detail in details:
+                data["data"]["details"].append(
+                    detailData(detail)
+                )
     return JsonResponse(data)
