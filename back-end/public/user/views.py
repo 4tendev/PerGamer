@@ -15,6 +15,7 @@ from market.serializers import detailData
 
 from .forms import LoginForm, RegisterForm, ResetPasswordForm, ChangePasswordForm
 from .models import User
+from .serializers import unKnownUserData ,userData
 from .OTP import createCode, checkCode
 
 
@@ -28,15 +29,9 @@ def userID(group, request):
         return str(request.user.id)
 
 
-unKnownUserData = {
-    "isKnown": False,
-}
 
 
-def userData(user: User):
-    return {
-        "isKnown": True,
-    } if user.is_authenticated else unKnownUserData
+
 
 
 @ratelimit(key=emailOrMobileInput, method=['PATCH'], block=False, rate='15/d')
