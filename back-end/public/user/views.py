@@ -15,7 +15,7 @@ from market.serializers import detailData
 
 from .forms import LoginForm, RegisterForm, ResetPasswordForm, ChangePasswordForm
 from .models import User
-from .serializers import unKnownUserData ,userData
+from .serializers import unKnownUserData, userData
 from .OTP import createCode, checkCode
 
 
@@ -27,11 +27,6 @@ def emailOrMobileInput(group, request):
 def userID(group, request):
     if request.method == "PUT":
         return str(request.user.id)
-
-
-
-
-
 
 
 @ratelimit(key=emailOrMobileInput, method=['PATCH'], block=False, rate='15/d')
@@ -440,12 +435,12 @@ def store(request):
                      }
         }
         if len(products):
-            detailsID = set([product.detailID for product in products])
+            detailsID = set([product["detailID"] for product in products])
             for product in products:
                 data["data"]["products"].append(
                     product
                 )
-            details = Detail.objects.filter(id__in=[detailsID])
+            details = Detail.objects.filter(id__in=detailsID)
             for detail in details:
                 data["data"]["details"].append(
                     detailData(detail)
