@@ -11,6 +11,7 @@ const Market = (props: {
 }) => {
   const [market, setMarket] = useState<Market>(props.market);
   const [fetching, setFetching] = useState(false);
+  const [contains, setContains] = useState<string>("");
   const platforms = props.platforms;
   const [platform, setPlatform] = useState<Platform | undefined>(
     props.platform
@@ -64,10 +65,15 @@ const Market = (props: {
     if (isFirstRender.current) {
       isFirstRender.current = false;
     } else {
-      setFilter(defaultFilterMaker());
-      setMarket({ products: [], details: [] });
+      resetDefault();
     }
   }, [platform]);
+
+  function resetDefault() {
+    setContains("")
+    setFilter(defaultFilterMaker());
+    setMarket({ products: [], details: [] });
+  }
 
   async function getmarket() {
     const params = new URLSearchParams();
@@ -116,7 +122,7 @@ const Market = (props: {
   return (
     <div className="h-full flex flex-col ">
       <div className="flex flex-wrap gap-x-10 items-center w-full justify-between sm:justify-center my-3 gap-3  px-3 sm:h-8 h-20">
-        <div  className="flex justify-between items-center sm:w-fit w-full item-center">
+        <div className="flex justify-between items-center sm:w-fit w-full item-center">
           <select
             className="select select-sm select-bordered select-info"
             onChange={(event) =>
@@ -185,10 +191,15 @@ const Market = (props: {
             </div>
           )}
         </div>
-        <Contains filter={filter} changeContains={changeContains} />
+        <Contains
+          filter={filter}
+          changeContains={changeContains}
+          contains={contains}
+          setContains={setContains}
+        />
       </div>
       <div
-      dir="ltr"
+        dir="ltr"
         className={
           "flex px-3 sm:px-5    overflow-auto " + (platform ? " sm:ps-40 " : "")
         }
@@ -208,22 +219,29 @@ const Market = (props: {
           </div>
         )}
         <div className="flex flex-wrap grow px-4 gap-3 justify-center  ">
-          {market.products.length > 0
-            ? market.details.map((detail) => {
-                const products = market.products.filter(
-                  (product) => product.detailID == detail.id
+          {market.products.length > 0 ? (
+            market.details.map((detail) => {
+              const products = market.products.filter(
+                (product) => product.detailID == detail.id
+              );
+              if (products.length > 0) {
+                return (
+                  <ProductCard
+                    key={detail.id}
+                    detail={detail}
+                    products={products}
+                  />
                 );
-                if (products.length > 0) {
-                  return (
-                    <ProductCard
-                      key={detail.id}
-                      detail={detail}
-                      products={products}
-                    />
-                  );
-                }
-              })
-            : "Nothing exist with this filters reset filter"}
+              }
+            })
+          ) : (
+            <div className="flex gap-5">
+              Oh no Nothing to show{" "}
+              <button className="btn btn-warning btn-xs" onClick={resetDefault}>
+                Reset Filters
+              </button>
+            </div>
+          )}
           {fetching && (
             <span className="loading loading-ring text-error loading-lg h-fit"></span>
           )}

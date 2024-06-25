@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from "react";
 
-const Contains = (props: { filter: Filter; changeContains: Function }) => {
-  const [contains, setContains] = useState<string>(props.filter.contains);
+const Contains = (props: {
+  contains: string;
+  setContains: Function;
+  filter: Filter;
+  changeContains: Function;
+}) => {
   useEffect(() => {
-    props.changeContains(contains);
+    props.changeContains(props.contains);
 
     return () => {};
-  }, [contains]);
+  }, [props.contains]);
+
   return (
     <input
       type="text"
       className="input input-sm input-bordered max-w-56"
-      value={contains}
-      onChange={(event) => setContains(event.target.value)}
+      value={props.contains}
+      onChange={(event) => props.setContains(event.target.value)}
     />
   );
 };
