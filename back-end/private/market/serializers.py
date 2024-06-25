@@ -1,5 +1,4 @@
-from .models import Product , Transaction,Order,Asset,AssetValue
-
+from .models import Product, Transaction, Order, Asset, AssetValue
 
 
 def productData(product: Product):
@@ -12,9 +11,11 @@ def productData(product: Product):
         "descriptions": product.descriptions,
         "tradeableAt": product.tradeableAt,
         "deliveryMethod": product.deliveryMethod,
-        "detailID" : product.detailID
+        "detailID": product.detailID,
+        "status":  product.status
 
     }
+
 
 def transactionData(transaction: Transaction):
     return {
@@ -23,8 +24,6 @@ def transactionData(transaction: Transaction):
         "asset": transaction.assetValue.asset.name,
         "uniqueID": transaction.uniqueID
     }
-
-
 
 
 def orderData(order: Order):
