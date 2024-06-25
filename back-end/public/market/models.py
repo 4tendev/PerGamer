@@ -28,13 +28,14 @@ class Detail(models.Model):
 
     title =models.CharField( max_length=100)
     tags = models.ManyToManyField(Tag,blank=True)
-    imageName =models.CharField( max_length=50)
+    imageName =models.CharField( max_length=100)
     imageURL=models.TextField(null=False ,blank=False)
     imageBigURL=models.TextField(null=False ,blank=False)
     stock=models.IntegerField(default=0)
     appid=models.IntegerField(choices=acceptedPlatforms ,default=570)
     uploaded=models.BooleanField(default=False)
     importantLevel=models.IntegerField(default=1)
+    descriptions= models.JSONField(default=dict)
 
     def imageLink (self,Big=False):
         if self.uploaded :
