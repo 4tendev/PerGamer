@@ -16,7 +16,7 @@ def platforms(request):
     data = {"code": "200", "data": []}
 
     for appid, game in acceptedPlatforms:
-        tags = Tag.objects.filter(appid=appid)
+        tags = Tag.objects.filter(appid=appid).filter(Q(Details__stock__gt=0)).distinct()
         tags_dict = {}
         if tags:
             for tag in tags:
@@ -87,3 +87,4 @@ def market(request):
                 )
 
     return JsonResponse(data)
+
