@@ -3,10 +3,21 @@ import datetime
 import time
 
 from django.http import JsonResponse
+from django.db import connections
 
 from .forms import CreateProductsForm, CreateTransactionForm, CreateOrder, OrderForm, TransactionsForm, ProductsForm
 from .models import Product, AssetValue, Asset, Transaction, Order
 from .serializers import productData, orderData, transactionData
+
+
+def update_stock(detailID, stock):
+    with connections['public_db'].cursor() as cursor:
+        # Example SQL query to update a table
+        cursor.execute("""
+            UPDATE market_detail
+            SET stock = %s
+            WHERE id = %s
+        """, [stock, detailID])
 
 
 def products(request):
@@ -25,7 +36,7 @@ def products(request):
 
         offset = request.GET.get("offset") or 0
         offset = int(offset)
-        limit=200 if form.cleaned_data.get("detailID__in") else 100
+        limit = 200 if form.cleaned_data.get("detailID__in") else 100
 
         data = {
             "code": "200",
@@ -48,6 +59,7 @@ def products(request):
         form_data = json.loads(request.body)
         form = CreateProductsForm(form_data)
         if not form.is_valid():
+            print(form.errors)
             return JsonResponse(data)
 
         assetID = form.cleaned_data.get("assetID") or None
@@ -65,7 +77,8 @@ def products(request):
 
         createdProduct = Product.objects.create(assetID=assetID, detailID=detailID, creatorID=creatorID,
                                                 creatorShare=creatorShare, descriptions=descriptions, tradeableAt=tradeableAt, deliveryMethod=deliveryMethod)
-
+        update_stock(detailID,  Product.objects.filter(
+            detailID=detailID, status=2).count())
         data = {
             "code": "200",
             "data": productData(createdProduct)

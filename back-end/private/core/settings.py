@@ -96,11 +96,27 @@ DATABASES = {
         'PASSWORD': os.environ["PGPASSWORD"],
         'HOST': os.environ["PGHOST"],
         'PORT': os.environ["PGPORT"],
+    },
+    'public_db': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get("PGDATABASEPUBLIC"),
+        'USER': os.environ["PGUSERPUBLIC"],
+        'PASSWORD': os.environ["PGPASSWORDPUBLIC"],
+        'HOST': os.environ["PGHOSTPUBLIC"],
+        'PORT': os.environ["PGPORTPUBLIC"],
     }
 } if os.environ.get("PGDATABASE") else {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'public_db': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get("PGDATABASEPUBLIC"),
+        'USER': os.environ["PGUSERPUBLIC"],
+        'PASSWORD': os.environ["PGPASSWORDPUBLIC"],
+        'HOST': os.environ["PGHOSTPUBLIC"],
+        'PORT': os.environ["PGPORTPUBLIC"],
     }
 }
 
