@@ -22,7 +22,7 @@ const Tags = (props: {
               readOnly
               onClick={() => setIsOpen((prev) => !prev)}
             />{" "}
-            <div className="collapse-title text-info font-medium">{key}</div>
+            <div className="collapse-title  font-medium">{key}</div>
             <div className="collapse-content">
               {tagArray.map((tag) => (
                 <div key={tag} className="form-control ">
