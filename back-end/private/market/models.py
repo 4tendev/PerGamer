@@ -6,12 +6,13 @@ import datetime
 
 class Asset(models.Model):
     acceptAbleAssets = [
-        ("BTC", "BTC"),
+        ("SATOSHI", "SATOSHI"),
         ("USDT", "USDT"),
         ("TOMAN", "TOMAN")
     ]
     name = models.CharField(
-        max_length=5, choices=acceptAbleAssets, unique=True)
+        max_length=7, choices=acceptAbleAssets, unique=True)
+    decimal =models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -61,9 +62,9 @@ class Product(models.Model):
     assetID = models.CharField(null=True, unique=True, max_length=50)
     detailID = models.IntegerField()
     creatorID = models.BigIntegerField()
-    status = models.IntegerField(choices=stats, default=1)
+    status = models.IntegerField(choices=stats, default=2)
     creatorShare = models.ForeignKey(AssetValue,  on_delete=models.PROTECT)
-    descriptions = models.JSONField()
+    descriptions = models.JSONField(null=True)
     deliveryMethod = models.IntegerField(choices=deliveryMethods)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -111,7 +112,7 @@ class Order (models.Model):
     sellerDeliverAt = models.DateField(null=True, blank=True)
     status = models.IntegerField(choices=stats, default=1)
     product = models.ForeignKey(
-        Product,  on_delete=models.PROTECT)
+        Product,null=False,  on_delete=models.PROTECT)
     initialTransaction = models.OneToOneField(
         Transaction,  null=False, related_name=("initiatedOrder"), on_delete=models.PROTECT)
     finalTransaction = models.OneToOneField(Transaction, null=True, related_name=(
