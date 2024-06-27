@@ -27,7 +27,7 @@ class Tag(models.Model):
 class Detail(models.Model):
 
     title =models.CharField( max_length=100)
-    tags = models.ManyToManyField(Tag,blank=True)
+    tags = models.ManyToManyField(Tag,blank=True,related_name="Details")
     imageName =models.CharField( max_length=100)
     imageURL=models.TextField(null=False ,blank=False)
     imageBigURL=models.TextField(null=False ,blank=False)
@@ -35,7 +35,6 @@ class Detail(models.Model):
     appid=models.IntegerField(choices=acceptedPlatforms ,default=570)
     uploaded=models.BooleanField(default=False)
     importantLevel=models.IntegerField(default=1)
-    descriptions= models.JSONField(default=dict)
 
     def imageLink (self,Big=False):
         if self.uploaded :
