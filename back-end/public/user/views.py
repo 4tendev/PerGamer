@@ -13,7 +13,7 @@ from core.settings import SESSION_COOKIE_NAME, PRIVATE_BACK_END_HOST
 from market.models import Detail, Tag, acceptedPlatforms
 from market.serializers import detailData
 
-from .forms import LoginForm, RegisterForm, ResetPasswordForm, ChangePasswordForm
+from .forms import LoginForm, RegisterForm, ResetPasswordForm, ChangePasswordForm, ProductForm
 from .models import User
 from .serializers import unKnownUserData, userData
 from .OTP import createCode, checkCode
@@ -321,6 +321,10 @@ def process_assets(asset_list, appid):
             assetid = asset["assetid"]
             name = asset["market_hash_name"]
             tags = asset["tags"]
+            descriptions = asset.get("descriptions", [])
+            pattern = re.compile(r'url\([^\)]+\)')
+            filtered_descriptions = [
+                desc for desc in descriptions if pattern.search(desc["value"])]
             cache_key = f"detail_{get_valid_filename(name)}_{appid}"
             detailId = cache.get(cache_key)
             if detailId is None:
@@ -330,7 +334,6 @@ def process_assets(asset_list, appid):
                     cache.set(cache_key, detailId, timeout=864000)
             if not detailId:
                 imagename = get_valid_filename(asset["market_hash_name"])
-                descriptions = asset.get("descriptions", [])
                 if asset["icon_url"] and asset["icon_url_large"]:
                     image_url = 'https://community.cloudflare.steamstatic.com/economy/image/' + \
                         asset["icon_url"]
@@ -339,7 +342,7 @@ def process_assets(asset_list, appid):
                 else:
                     continue
                 newDetail = Detail.objects.create(
-                    imageURL=image_url, imageBigURL=image_big_url, imageName=imagename, title=name, appid=appid, descriptions=descriptions)
+                    imageURL=image_url, imageBigURL=image_big_url, imageName=imagename, title=name, appid=appid)
                 try:
                     for tag in tags:
                         tag_name = tag["localized_category_name"]
@@ -352,8 +355,8 @@ def process_assets(asset_list, appid):
                 except Exception as e:
                     newDetail.delete()
                     continue
-            target_list.append({"assetId":  assetid, "tradable": asset["marketable"], "title": asset["market_hash_name"], "imageURL": (
-                'https://community.cloudflare.steamstatic.com/economy/image/' + asset["icon_url"]), "detailID": detailId})
+            target_list.append({"assetID":  assetid,  "title": asset["market_hash_name"], "imageURL": (
+                'https://community.cloudflare.steamstatic.com/economy/image/' + asset["icon_url"]), "detailID": detailId, "descriptions": filtered_descriptions , "GIFTONLY" : asset["marketable"] ==False  ,"appid":appid })
         except Exception as e:
             print(e)
             continue
@@ -362,7 +365,7 @@ def process_assets(asset_list, appid):
 
 def inventory(request):
     user = request.user
-    if not user.canSell:
+    if not user.is_authenticated and not user.canSell:
         data = {
             "code": "400"
         }
@@ -374,14 +377,13 @@ def inventory(request):
         if invetories is not None:
             data = {
                 "code": "200",
-                "invetories": invetories
+                "data": invetories
             }
             return JsonResponse(data)
         invetories = []
         for platform in acceptedPlatforms:
             appid = platform[0]
-            platformInvetoris = {
-                "tradeableAssets": [], "notTradeableAssets": []}
+            platformInvetory = []
             url = (
                 f'''https://api.steampowered.com/IEconService/GetInventoryItemsWithDescriptions/v1/?key={user.steamAPIKey}&steamid={user.id64}&appid={appid}&contextid=2&get_descriptions=true''')
             try:
@@ -395,29 +397,25 @@ def inventory(request):
                         if item1['classid'] == item2['classid'] and item1['instanceid'] == item2['instanceid']:
                             item1.update(item2)
                             break
-                notTradeableAssets = [
-                    item for item in assets if item['marketable'] != 1]
-                tradeableAssets = [
-                    item for item in assets if item['tradable'] == True]
-                platformInvetoris["notTradeableAssets"] = process_assets(
-                    notTradeableAssets, appid)
-                platformInvetoris["tradeableAssets"] = process_assets(
-                    tradeableAssets, appid)
-                invetories.append({platform[1]: platformInvetoris})
+                platformInvetory = process_assets(
+                    assets, appid)
+
+                invetories.append({platform[1]: platformInvetory})
             except Exception as e:
                 print(e)
                 continue
         cache.set(cache_key, invetories, 600)
         data = {
             "code": "200",
-            "invetories": invetories
+
+            "data": invetories
         }
         return JsonResponse(data)
 
 
 def store(request):
     user = request.user
-    if not user.canSell:
+    if not user.is_authenticated and not user.canSell:
         data = {
             "code": "400"
         }
@@ -445,4 +443,17 @@ def store(request):
                 data["data"]["details"].append(
                     detailData(detail)
                 )
+    elif method == "POST":
+        form_data = json.loads(request.body)
+        form = ProductForm(form_data)
+        data = {
+            "code": "400",
+        }
+        if not form.is_valid():
+            print(form.errors)
+            return JsonResponse(data)
+        creatorID=user.id
+        form.cleaned_data["creatorID"]=creatorID
+        data = requests.post(
+            f"{PRIVATE_BACK_END_HOST}/market/products/" ,json=form.cleaned_data ).json()
     return JsonResponse(data)
