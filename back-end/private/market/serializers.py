@@ -8,7 +8,7 @@ def productData(product: Product):
         "creatorID": product.creatorID,
         "amount": product.creatorShare.amount,
         "asset": product.creatorShare.asset.name,
-        "descriptions": product.descriptions,
+        "descriptions": product.descriptions or [],
         "tradeableAt": product.tradeableAt,
         "deliveryMethod": product.deliveryMethod,
         "detailID": product.detailID,
