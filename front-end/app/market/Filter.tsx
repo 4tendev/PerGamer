@@ -6,16 +6,11 @@ const Filter = (props: {
   addorRemoveTag: Function;
   filter: Filter;
 }) => {
-
-
-  
-
   const tags = props.tags;
   return (
-    <div dir="ltr" className="h-full flex flex-col gap-3 w-full">
+    <div dir="ltr" className="h-fit flex flex-col gap-3 w-full ">
       Filters
-
-      <div>
+      <div className="sm:h-[70vh] overflow-auto">
         {Object.entries(tags).map(([key, tagArray]) => {
           const tag = { [key]: tagArray };
           return (
