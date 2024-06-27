@@ -17,11 +17,12 @@ type Product = {
   detailID: number;
   creatorID: number;
   asset: string;
-  deliveryMethod: number;
+  deliveryMethod: 1 | 2;
   descriptions: Description[];
-  amount :number
+  amount: number;
 };
 type Detail = {
+  img: string;
   id: number;
   title: string;
   tags: Tag[];

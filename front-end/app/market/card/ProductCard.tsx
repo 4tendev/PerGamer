@@ -1,4 +1,5 @@
 "use client";
+import Descriptions from "@/app/components/product/Descriptions";
 import Image from "next/image";
 import React, { useState } from "react";
 
@@ -23,62 +24,59 @@ const ProductCard = (props: { detail: Detail; products: Product[] }) => {
   return (
     <>
       <div className="w-52  p-4  h-fit rounded-md flex flex-col gap-2 bg-base-200">
-        <div className="flex justify-between w-full text-xs">
-          <div>sell all</div>
-          <div>average delivery</div>
+        <div className="flex justify-between w-full text-[10px]">
+          {selectedProduct.deliveryMethod == 1 ? (
+            <>
+              <div className="">
+                { "deliver at less than day"}
+              </div>
+              <div>2 H </div>
+            </>
+          ) : (
+            <>
+              <div>
+                Dota2 Gift
+              </div>
+              <div>{"seller's steam profile"}</div>
+            </>
+          )}
         </div>
-        <div className="w-full h-fit pb-3 flex items-start justify-center   z-0">
-          <Image
+        <div className="w-full h-[160px]  flex flex-col items-start justify-start py-2 gap-1 z-0">
+          <img
             width={170}
             height={170}
             className="mx-auto rounded-lg shadow-xl"
             alt="Drow"
-            src={"/drow.webp"}
+            src={detail.img}
           />
-          <div className="   flex   gap-1">
-            {selectedProduct.descriptions.map((item, index) => {
-              const regex = /url\([^\)]+\)/g;
-              const matches = item.value.match(regex);
-              const textOnly = item.value.replace(/<\/?[^>]+(>|$)/g, " ");
-              return matches ? (
-                <div
-                  key={index}
-                  className="tooltip"
-                  data-tip={textOnly.substring(0, 25) + ".."}
-                >
-                  <img
-                    width={30}
-                    height={30}
-                    className="mx-auto rounded-lg shadow-xl tooltip"
-                    data-tip={textOnly}
-                    alt={textOnly}
-                    src={matches[0].substring(4, matches[0].length - 1)}
-                  />
-                </div>
-              ) : null;
-            })}
-          </div>
+          <Descriptions descriptions={selectedProduct.descriptions} />
         </div>
-        <div dir="ltr" className="font-bold  leading-3 ">
+        <div dir="ltr" className=" leading-3 my-1 ">
           {selectedProduct.amount} {selectedProduct.asset}
         </div>
-        <div
-          dir="ltr"
-          className="flex text-[10px] gap-2 overflow-hidden font-mono"
-        >
-          {detail.tags.map((tag) => (
-            <div key={tag} className="broder rounded-lg text-info">
-              {tag}
-            </div>
-          ))}
+        <div>
+          <div
+            dir="ltr"
+            className="text-xs font-bold  h-4 w-full overflow-hidden"
+          >
+            {detail.title}
+          </div>
+          <div
+            dir="ltr"
+            className="flex text-[10px] gap-2 overflow-hidden font-mono"
+          >
+            {detail.tags.map((tag) => (
+              <div key={tag} className="broder rounded-lg text-info">
+                {tag}
+              </div>
+            ))}
+          </div>
         </div>
-        <div dir="ltr" className="text-sm  leading-3">
-          {detail.title}
-        </div>
-        <div className="flex justify-between text-xs items-center my-1">
-          <div>Seller :</div>
+        <div className="flex justify-between text-xs items-center ">
+          <div>Sellers :</div>
           {uniqueProducts.length > 0 && (
             <select
+              value={selectedProduct.id}
               onChange={(event) =>
                 setSelectedProduct(
                   uniqueProducts?.find(
@@ -90,7 +88,9 @@ const ProductCard = (props: { detail: Detail; products: Product[] }) => {
               className="select select-xs "
             >
               {uniqueProducts.map((product) => (
-                <option value="">{product.id}</option>
+                <option key={product.id} value={product.id}>
+                  {product.id}
+                </option>
               ))}
             </select>
           )}
