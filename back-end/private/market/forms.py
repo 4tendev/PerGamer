@@ -3,7 +3,7 @@ from .models import Asset, Product
 
 assetNameField = forms.ChoiceField(
     choices=Asset.acceptAbleAssets, required=True)
-amountField = forms.FloatField(required=True, min_value=0.000001)
+amountField = forms.FloatField(required=True, min_value=0.01)
 idField = forms.IntegerField(min_value=1, required=True)
 
 
@@ -15,7 +15,7 @@ class CreateProductsForm(forms.Form):
     creatorID = idField
     amount = amountField
     assetName = assetNameField
-    descriptions = forms.JSONField()
+    descriptions = forms.JSONField(required=False)
     tradeableAt = forms.DateField(required=False)
     deliveryMethod = forms.ChoiceField(
         choices=Product.deliveryMethods, required=True)
