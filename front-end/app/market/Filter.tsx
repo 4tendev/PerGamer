@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import Tags from "./Tags";
 const Filter = (props: {
   tags: Tags;
-  changeContains: Function;
   addorRemoveTag: Function;
   filter: Filter;
 }) => {

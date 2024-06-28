@@ -70,7 +70,7 @@ const Market = (props: {
   }, [platform]);
 
   function resetDefault() {
-    setContains("")
+    setContains("");
     setFilter(defaultFilterMaker());
     setMarket({ products: [], details: [] });
   }
@@ -119,6 +119,37 @@ const Market = (props: {
     filter.offset === 0 && getmarket();
     return () => {};
   }, [filter]);
+
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const handleScroll = (event: Event) => {
+      const container = event.target as HTMLElement;
+      if (
+        container.scrollTop + container.clientHeight >=
+          container.scrollHeight - 200 &&
+        fetching === false &&
+        filter.offset % 30 === 0
+      ) {
+        setFilter((prev) => {
+          return { ...prev, offset: prev.offset + 30 };
+        });
+        getmarket();
+      }
+    };
+
+    const element = scrollRef.current;
+    if (element) {
+      element.addEventListener("scroll", handleScroll);
+    }
+
+    // Clean up the event listener on component unmount
+    return () => {
+      if (element) {
+        element.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [fetching]);
+
   return (
     <div className="h-full flex flex-col ">
       <div className="flex flex-wrap gap-x-10 items-center w-full justify-between sm:justify-center my-3 gap-3  px-3 sm:h-8 h-20">
@@ -179,7 +210,6 @@ const Market = (props: {
                 <ul className="menu p-4 w-5/6 min-h-full bg-base-200 text-base-content  sm:absolute">
                   {
                     <Filter
-                      changeContains={changeContains}
                       filter={filter}
                       addorRemoveTag={addorRemoveTag}
                       key={1}
@@ -199,17 +229,17 @@ const Market = (props: {
         />
       </div>
       <div
+        ref={scrollRef}
         dir="ltr"
         className={
           "flex px-3 sm:px-5    overflow-auto " + (platform ? " sm:ps-40 " : "")
         }
       >
         {platform && (
-          <div className="hidden sm:block w-36 absolute  start-3">
+          <div className="hidden sm:block w-36 absolute top-16 pt-2 start-3">
             {" "}
             {
               <Filter
-                changeContains={changeContains}
                 filter={filter}
                 addorRemoveTag={addorRemoveTag}
                 key={2}
@@ -218,7 +248,7 @@ const Market = (props: {
             }
           </div>
         )}
-        <div className="flex flex-wrap grow px-4 gap-3 justify-center  ">
+        <div className="flex flex-wrap grow px-1 gap-3 justify-center  ">
           {market.products.length > 0 ? (
             market.details.map((detail) => {
               const products = market.products.filter(
