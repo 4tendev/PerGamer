@@ -33,7 +33,6 @@ PROXY = {
 ALLOWED_HOSTS = [INTERNAL_HOST]
 
 
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
