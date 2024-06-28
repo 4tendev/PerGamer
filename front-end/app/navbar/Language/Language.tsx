@@ -33,7 +33,6 @@ const Language = () => {
     <>
       <div className="dropdown">
         <div
-          tabIndex={0}
           role="button"
           className="  p-2 "
           onClick={() =>
@@ -46,27 +45,18 @@ const Language = () => {
         </div>
       </div>
       {/* Open the modal using document.getElementById('ID').showModal() method */}
-      <dialog id="languageModal" className="modal z-100">
-        <div className="modal-box bg-black">
-          <div className="flex justify-between">
-            <h3 dir="ltr" className="font-bold text-lg">
-              Wellcome !
-            </h3>
-            <h3 dir="rtl" className="font-bold text-lg">
-              خوش آمدید !
-            </h3>
-          </div>
-
+      <dialog id="languageModal" className="modal">
+        <div className="modal-box bg-black absolute top-0 text-xs">
           <div
             dir="ltr"
-            className="py-4 flex justify-center gap-3 text-xs items-center"
+            className="flex justify-center gap-3 mb-3 text-xs items-center"
           >
             Please Choose Your preference language{" "}
             <button
               dir={SUPPORTED_LANGUAGES[0].dir}
               key={SUPPORTED_LANGUAGES[0].lang}
               onClick={() => ChangeLanguage(SUPPORTED_LANGUAGES[0])}
-              className="btn btn-primary btn-xs"
+              className="btn btn-primary btn-xs "
             >
               <small>{SUPPORTED_LANGUAGES[0].text}</small>
             </button>
@@ -80,7 +70,7 @@ const Language = () => {
               dir={SUPPORTED_LANGUAGES[1].dir}
               key={SUPPORTED_LANGUAGES[1].lang}
               onClick={() => ChangeLanguage(SUPPORTED_LANGUAGES[1])}
-              className="btn btn-primary btn-xs"
+              className="btn btn-primary btn-xs "
             >
               <small>{SUPPORTED_LANGUAGES[1].text}</small>
             </button>
