@@ -249,29 +249,32 @@ const Market = (props: {
           </div>
         )}
         <div className="flex flex-wrap grow px-1 gap-3 justify-center  ">
-          {market.products.length > 0 ? (
-            market.details.map((detail) => {
-              const products = market.products.filter(
-                (product) => product.detailID == detail.id
-              );
-              if (products.length > 0) {
-                return (
-                  <ProductCard
-                    key={detail.id}
-                    detail={detail}
-                    products={products}
-                  />
+          {market.products.length > 0
+            ? market.details.map((detail) => {
+                const products = market.products.filter(
+                  (product) => product.detailID == detail.id
                 );
-              }
-            })
-          ) : (
-            <div className="flex gap-5">
-              Oh no Nothing to show{" "}
-              <button className="btn btn-warning btn-xs" onClick={resetDefault}>
-                Reset Filters
-              </button>
-            </div>
-          )}
+                if (products.length > 0) {
+                  return (
+                    <ProductCard
+                      key={detail.id}
+                      detail={detail}
+                      products={products}
+                    />
+                  );
+                }
+              })
+            : !fetching && (
+                <div className="flex gap-5">
+                  Oh no Nothing to show{" "}
+                  <button
+                    className="btn btn-warning btn-xs"
+                    onClick={resetDefault}
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              )}
           {fetching && (
             <span className="loading loading-ring text-error loading-lg h-fit"></span>
           )}
