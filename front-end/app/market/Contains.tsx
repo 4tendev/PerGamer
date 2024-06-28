@@ -15,7 +15,7 @@ const Contains = (props: {
   return (
     <input
       type="text"
-      className="input input-sm input-bordered max-w-56"
+      className="input input-sm input-bordered sm:max-w-56 w-full"
       value={props.contains}
       onChange={(event) => props.setContains(event.target.value)}
     />
