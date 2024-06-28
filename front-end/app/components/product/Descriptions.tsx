@@ -19,21 +19,28 @@ const Descriptions = (props: { descriptions: Description[] }) => {
             /<\/?[^>]+(>|$)|\.png\)|">/g,
             " "
           );
-          return matches?.map((match, indexed) => (
-            textOnly.length >5 &&
-            <div key={index + 1} className="tooltip " style={{fontSize:"5px"}} data-tip={textOnly}>
-              <img
-                key={indexed}
-                width={30}
-                height={30}
-                style={{fontSize:"5px"}}
-                className="mx-auto rounded-lg  tooltip "
-                data-tip={textOnly}
-                alt={""}
-                src={match.substring(4, match.length - 1)}
-              />
-            </div>
-          ));
+          return matches?.map(
+            (match, indexed) =>
+              textOnly.length > 5 && (
+                <div
+                  key={index + 1}
+                  className="tooltip "
+                  style={{ fontSize: "5px" }}
+                  data-tip={textOnly}
+                >
+                  <img
+                    key={indexed}
+                    width={30}
+                    height={30}
+                    style={{ fontSize: "5px" }}
+                    className="mx-auto rounded-lg  tooltip "
+                    data-tip={textOnly}
+                    alt={""}
+                    src={match.substring(4, match.length - 1)}
+                  />
+                </div>
+              )
+          );
         }
       })}
     </div>
