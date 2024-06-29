@@ -115,10 +115,6 @@ const Market = (props: {
       setFetching(false);
     });
   }
-  useEffect(() => {
-    filter.offset === 0 && getmarket();
-    return () => {};
-  }, [filter]);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -130,9 +126,6 @@ const Market = (props: {
         fetching === false &&
         filter.offset % 30 === 0
       ) {
-        setFilter((prev) => {
-          return { ...prev, offset: prev.offset + 30 };
-        });
         getmarket();
       }
     };
@@ -149,6 +142,36 @@ const Market = (props: {
       }
     };
   }, [fetching]);
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (filter.offset === 0) {
+      getmarket();
+    } else if (
+      container &&
+      container.scrollHeight == container.clientHeight &&
+      filter.offset % 30 === 0
+    ) {
+      getmarket();
+    }
+    return () => {};
+  }, [filter]);
+
+  function getUniqueObjects<T>(array: T[]): T[] {
+    const uniqueObjects = new Set();
+    const result = [];
+
+    for (const item of array) {
+      const serializedItem = JSON.stringify(item);
+      if (!uniqueObjects.has(serializedItem)) {
+        uniqueObjects.add(serializedItem);
+        result.push(item);
+      }
+    }
+
+    return result;
+  }
+
+  const uniqueDetails = getUniqueObjects(market.details);
 
   return (
     <div className="h-full flex flex-col ">
@@ -184,7 +207,6 @@ const Market = (props: {
               />
 
               <div className="drawer-content ">
-                {/* Page content here */}
                 <label
                   htmlFor="my-drawer"
                   className="  drawer-button  w-fit  h-fit flex gap-5 items-center "
@@ -250,7 +272,7 @@ const Market = (props: {
         )}
         <div className="flex flex-wrap grow px-1 gap-3 justify-center  ">
           {market.products.length > 0
-            ? market.details.map((detail) => {
+            ? uniqueDetails.map((detail: Detail) => {
                 const products = market.products.filter(
                   (product) => product.detailID == detail.id
                 );
