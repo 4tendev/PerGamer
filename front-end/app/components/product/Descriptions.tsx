@@ -30,8 +30,8 @@ const Descriptions = (props: { descriptions: Description[] }) => {
                 >
                   <img
                     key={indexed}
-                    width={30}
-                    height={30}
+                    width={25}
+                    height={25}
                     style={{ fontSize: "5px" }}
                     className="mx-auto rounded-lg  tooltip "
                     data-tip={textOnly}
