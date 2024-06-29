@@ -45,7 +45,7 @@ const ProductCard = (props: { detail: Detail; products: Product[] }) => {
           src={detail.img}
         />
 
-        <div className="absolute top-4 left-0">
+        <div className="absolute bottom-2 left-0">
           <Descriptions descriptions={selectedProduct.descriptions} />
         </div>
       </div>
@@ -53,7 +53,7 @@ const ProductCard = (props: { detail: Detail; products: Product[] }) => {
         dir="ltr"
         className=" leading-3  text-xs flex justify-between items-center pe-1"
       >
-        {selectedProduct.amount}123222 {selectedProduct.asset}
+        {selectedProduct.amount} {selectedProduct.asset}
         <button className="  h-4 w-8 rounded-xl bg-success text-black">
           +
         </button>
@@ -67,10 +67,12 @@ const ProductCard = (props: { detail: Detail; products: Product[] }) => {
         </div>
         <div
           dir="ltr"
-          className="flex text-[10px] gap-2 overflow-hidden font-mono px-1"
+          className="flex text-[10px] gap-2 overflow-hidden font-mono px-1 h-4"
         >
-          {detail.tags.map((tag) => (
-            <div key={tag} className="broder rounded-lg text-info">
+          {detail.tags.map((tag,index
+
+          ) => (
+            <div key={index} className=" text-info">
               {tag}
             </div>
           ))}
