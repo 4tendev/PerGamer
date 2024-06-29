@@ -14,7 +14,7 @@ const Contains = (props: {
     }
     timeoutIdRef.current = setTimeout(() => {
       props.changeContains(props.contains);
-    }, 1000); // T
+    }, 700); // T
 
     return () => {
       if (timeoutIdRef.current) {
