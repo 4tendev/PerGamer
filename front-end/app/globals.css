@@ -23,6 +23,9 @@ input[type=number] {
  
   font-size: 0.6rem /* 16px */;
   padding: 0px;
+  padding-bottom: 20px;
+  padding-left: 6px;
+  padding-right: 6px;
   height: 100%;
 
 
