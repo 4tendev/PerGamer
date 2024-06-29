@@ -69,6 +69,7 @@ class Product(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     tradeableAt = models.DateTimeField(default=datetime.date.today)
+    isUnique=models.BooleanField(default=True)
 
     def __str__(self):
         return str(self.creatorID) + " "+str(self.creatorShare) + " " + str(self.detailID)

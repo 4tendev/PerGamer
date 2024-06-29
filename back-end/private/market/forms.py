@@ -7,8 +7,6 @@ amountField = forms.FloatField(required=True, min_value=0.01)
 idField = forms.IntegerField(min_value=1, required=True)
 
 
-
-
 class CreateProductsForm(forms.Form):
     assetID = forms.CharField(max_length=50, required=False)
     detailID = idField
@@ -16,10 +14,16 @@ class CreateProductsForm(forms.Form):
     amount = amountField
     assetName = assetNameField
     descriptions = forms.JSONField(required=False)
+    isUnique = forms.BooleanField(required=False)
     tradeableAt = forms.DateField(required=False)
     deliveryMethod = forms.ChoiceField(
         choices=Product.deliveryMethods, required=True)
 
+    def clean(self):
+        cleaned_data = super().clean()
+        if not cleaned_data.get('isUnique'):
+            cleaned_data["isUnique"] = False
+        return cleaned_data
 
 
 class CreateTransactionForm(forms.Form):
@@ -43,7 +47,7 @@ class OrderForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         cleaned_data = {key: value for key,
-                        value in cleaned_data.items() if value }
+                        value in cleaned_data.items() if value}
         return cleaned_data
 
 
@@ -54,7 +58,7 @@ class OrdersForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         cleaned_data = {key: value for key,
-                        value in cleaned_data.items() if value }
+                        value in cleaned_data.items() if value}
         return cleaned_data
 
 
@@ -64,18 +68,19 @@ class TransactionsForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         cleaned_data = {key: value for key,
-                        value in cleaned_data.items() if value }
+                        value in cleaned_data.items() if value}
         return cleaned_data
+
 
 class ProductsForm(forms.Form):
     creatorID = forms.IntegerField(required=False)
     deliveryMethod = forms.IntegerField(required=False)
-    tradeableAt = forms.DateField( required=False)
-    status = forms.ChoiceField( choices=Product.stats, required=False)
-    detailID__in= forms.JSONField(required=False)
+    tradeableAt = forms.DateField(required=False)
+    status = forms.ChoiceField(choices=Product.stats, required=False)
+    detailID__in = forms.JSONField(required=False)
 
     def clean(self):
         cleaned_data = super().clean()
         cleaned_data = {key: value for key,
-                        value in cleaned_data.items() if value }
-        return cleaned_data    
+                        value in cleaned_data.items() if value}
+        return cleaned_data

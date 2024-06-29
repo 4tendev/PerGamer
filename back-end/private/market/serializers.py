@@ -12,7 +12,8 @@ def productData(product: Product):
         "tradeableAt": product.tradeableAt,
         "deliveryMethod": product.deliveryMethod,
         "detailID": product.detailID,
-        "status":  product.status
+        "status":  product.status,
+        "isUnique" : product.isUnique
 
     }
 

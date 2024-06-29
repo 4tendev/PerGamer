@@ -76,7 +76,7 @@ def products(request):
         creatorShare = AssetValue.objects.create(amount=amount, asset=asset)
 
         createdProduct = Product.objects.create(assetID=assetID, detailID=detailID, creatorID=creatorID,
-                                                creatorShare=creatorShare, descriptions=descriptions, tradeableAt=tradeableAt, deliveryMethod=deliveryMethod)
+                                                creatorShare=creatorShare, descriptions=descriptions, tradeableAt=tradeableAt, deliveryMethod=deliveryMethod ,isUnique=form.cleaned_data.get("isUnique"))
         update_stock(detailID,  Product.objects.filter(
             detailID=detailID, status=2).count())
         data = {

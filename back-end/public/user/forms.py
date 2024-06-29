@@ -53,6 +53,7 @@ class ProductForm(forms.Form):
     assetName = assetNameField
     descriptions = forms.JSONField(required=False)
     dayLeftToSend = forms.IntegerField(min_value=0, required=True)
+    isUnique = forms.BooleanField(required=False)
     deliveryMethod = forms.ChoiceField(
         choices=[
             (1, "Trade"),
@@ -66,4 +67,6 @@ class ProductForm(forms.Form):
             tradeableAt = current_date + \
                 timedelta(days=cleaned_data.get("dayLeftToSend"))
             cleaned_data["tradeableAt"] = tradeableAt.date().isoformat()
+        if not cleaned_data.get('isUnique'):
+            cleaned_data["isUnique"] = False
         return cleaned_data
