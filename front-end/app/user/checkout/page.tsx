@@ -17,19 +17,19 @@ const Page = async () => {
 
 
   return (
-    <div className="flex flex-col py-1">
+    <div className="flex flex-col pt-2 h-full">
       <div className="flex justify-center w-full ">
         Total Price : asdas{" "}
         <button className="btn btn-error btn-xs ">Removeall</button>
       </div>
 
-      <div className="flex flex-wrap sm:grow-0 grow px-1 gap-3 justify-center  py-3">
+      <div className="flex flex-wrap sm:grow-0 grow px-1 gap-3 justify-center  py-3 overflow-auto">
         {" "}
         {shoppingCard.map((card) => (
           <CheckOutCard  />
         ))}
       </div>
-      <div className="flex flex-col gap-3 bg-base-200 sm:static fixed bottom-8 w-full sm:py-5">
+      <div className="flex flex-col gap-3 bg-base-200  w-full sm:py-5 pt-5">
         <div className="flex justify-between w-64 m-auto bg-transparent ">
           <div className="bg-transparent">تعداد آیتم در سبد :</div>
           <div>{shoppingCard?.length} عدد</div>
