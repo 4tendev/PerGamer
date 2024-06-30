@@ -17,9 +17,11 @@ type Product = {
   detailID: number;
   creatorID: number;
   asset: string;
+  amount: number;
   deliveryMethod: 1 | 2;
   descriptions: Description[];
-  amount: number;
+  isUnique :boolean
+  
 };
 type Detail = {
   img: string;
@@ -37,4 +39,5 @@ type Filter = {
   selectedTags: Tag[];
   appid: number;
   offset: number;
+  trustedSellers :boolean
 };
