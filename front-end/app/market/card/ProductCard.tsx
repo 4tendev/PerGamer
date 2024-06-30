@@ -1,61 +1,87 @@
-"use client";
+"use state";
 import Descriptions from "@/app/components/product/Descriptions";
-import Image from "next/image";
+import getCookie from "@/commonTsBrowser/getCookie";
+import setCookie from "@/commonTsBrowser/setCookie";
 import React, { useState } from "react";
 
-const ProductCard = (props: { detail: Detail; products: Product[] }) => {
+const ProductCard = (props: {
+  detail: Detail;
+  product: Product;
+  setMarket: Function;
+}) => {
+  const [addingTo, setaddingTo] = useState(false);
+  const product = props.product;
   const detail = props.detail;
-  const products = props.products;
-  products.sort((a, b) => a.amount - b.amount);
 
-  const uniqueProducts: Product[] = [];
-  const seenCreatorIDs = new Set();
-
-  for (const product of products) {
-    if (!seenCreatorIDs.has(product.creatorID)) {
-      uniqueProducts.push(product);
-      seenCreatorIDs.add(product.creatorID);
-    }
+  function addToCard() {
+    setaddingTo(true);
+    setTimeout(() => {
+      setaddingTo(false);
+      props.setMarket((prev: Market) => {
+        const oldProducts = prev.products.filter(
+          (oldproduct) => oldproduct.id !== product.id
+        );
+        const newMarket = { ...prev, products: oldProducts };
+        return newMarket;
+      });
+    }, 300);
+    const shoppingCardString = getCookie("ShoppingCard");
+    const shoppingCard = shoppingCardString
+      ? JSON.parse(shoppingCardString)
+      : [];
+    shoppingCard.push(product.id);
+    setCookie(
+      "ShoppingCard",
+      JSON.stringify(Array.from(new Set(shoppingCard)))
+    );
   }
-  const [selectedProduct, setSelectedProduct] = useState<Product>(
-    uniqueProducts[0]
-  );
-
   return (
-    <div className="w-36   h-fit rounded-md flex flex-col gap-1 bg-base-300 p-1 ">
-      <div className="w-full h-[110px]  flex flex-col items-start justify-start  relative">
-        <div className="flex justify-between w-full text-[10px] px-1 ">
-          {selectedProduct.deliveryMethod == 1 ? (
-            <>
-              <div className="">{"deliver  day"}</div>
-              <div>2 H </div>
-            </>
-          ) : (
-            <>
-              <div>Dota2 Gift</div>
-              <div>{"seller's profile"}</div>
-            </>
-          )}
-        </div>
+    <div
+      key={product.id}
+      className="w-36   h-fit rounded-md flex flex-col gap-1 bg-base-300 p-2 "
+    >
+      <div className="flex justify-between w-full text-[10px] px-1 ">
+        {product.deliveryMethod == 1 ? (
+          <>
+            <div className="">{"deliver  day"}</div>
+            <div>2 H </div>
+          </>
+        ) : (
+          <>
+            <div>Dota2 Gift</div>
+            <div>{"seller's profile"}</div>
+          </>
+        )}
+      </div>
+      <div className="w-full h-[90px]  flex flex-col items-start justify-start  relative">
         <img
-          width={170}
-          height={170}
-          className="mx-auto  shadow-xl rounded-md "
+          width={130}
+          height={130}
+          className="mx-auto  rounded-md "
           alt={detail.title}
           src={detail.img}
         />
 
-        <div className="absolute bottom-2 left-0">
-          <Descriptions descriptions={selectedProduct.descriptions} />
+        <div className="absolute bottom-1.5 left-0 ">
+          <Descriptions descriptions={product.descriptions} />
         </div>
       </div>
       <div
         dir="ltr"
         className=" leading-3  text-xs flex justify-between items-center pe-1"
       >
-        {selectedProduct.amount} {selectedProduct.asset}
-        <button className="  h-4 w-8 rounded-xl bg-success text-black">
-          +
+        {product.amount} {product.asset}
+        <button
+          className="  h-4 w-8  btn-success btn btn-xs  "
+          onClick={addToCard}
+        >
+          {addingTo ? (
+            <>
+              <span className="loading loading-bars loading-md"></span>
+            </>
+          ) : (
+            "+"
+          )}
         </button>
       </div>
       <div>
@@ -67,12 +93,13 @@ const ProductCard = (props: { detail: Detail; products: Product[] }) => {
         </div>
         <div
           dir="ltr"
-          className="flex text-[10px] gap-2 overflow-hidden font-mono px-1 h-4"
+          className="flex items-center text-[10px] gap-2 leading-3 overflow-hidden font-mono h-3 w-full ps-1"
         >
-          {detail.tags.map((tag,index
-
-          ) => (
-            <div key={index} className=" text-info">
+          {detail.tags.map((tag, index) => (
+            <div
+              key={index}
+              className={" text-info shrink-0 " + (index > 1 && " hidden ")}
+            >
               {tag}
             </div>
           ))}
