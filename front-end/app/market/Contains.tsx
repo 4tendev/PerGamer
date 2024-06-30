@@ -34,7 +34,7 @@ const Contains = (props: {
       />
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="absolute top-2 right-3 w-4"
+        className="absolute top-2 end-3 w-4"
         fill="currentColor"
         viewBox="0 0 512 512"
       >
