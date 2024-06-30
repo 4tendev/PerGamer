@@ -33,7 +33,7 @@ const ProductCard = (props: {
       descriptions: asset.descriptions,
       dayLeftToSend: dayLeftToSend,
       deliveryMethod: deliveryMethod,
-      isUnique: asset.descriptions.length >0? true: false,
+      isUnique: asset.descriptions.length > 0 ? true : false,
     })
       .then((response) => {
         if (response.code == "200") {
@@ -47,13 +47,11 @@ const ProductCard = (props: {
 
   return (
     <div className="w-56 flex flex-col gap-3 border rounded-lg p-3 h-fit">
-
-      <div className="w-full h-[90px]  flex flex-col items-start justify-start  relative" >
-
-      <img src={asset.imageURL} alt={asset.title} />
-      <div className="absolute bottom-1.5 left-0 ">
-      <Descriptions descriptions={asset.descriptions} />
-      </div>
+      <div className="w-full h-[120px]  flex flex-col items-center justify-start  relative">
+        <img width={180} height={130} src={asset.imageURL} alt={asset.title} />
+        <div className="absolute bottom-1.5 left-0 ">
+          <Descriptions descriptions={asset.descriptions} />
+        </div>
       </div>
 
       <div className="w-full overflow-hidden h-6">{asset.title}</div>
