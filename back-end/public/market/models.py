@@ -30,7 +30,7 @@ class Detail(models.Model):
     tags = models.ManyToManyField(Tag,blank=True,related_name="Details")
     imageName =models.CharField( max_length=100)
     imageURL=models.TextField(null=False ,blank=False)
-    imageBigURL=models.TextField(null=False ,blank=False)
+    imageBigURL=models.TextField(null=True ,blank=True)
     stock=models.IntegerField(default=0)
     appid=models.IntegerField(choices=acceptedPlatforms ,default=570)
     uploaded=models.BooleanField(default=False)

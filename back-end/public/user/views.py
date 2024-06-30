@@ -334,11 +334,11 @@ def process_assets(asset_list, appid):
                     cache.set(cache_key, detailId, timeout=864000)
             if not detailId:
                 imagename = get_valid_filename(asset["market_hash_name"])
-                if asset["icon_url"] and asset["icon_url_large"]:
+                if asset["icon_url"]:
                     image_url = 'https://community.cloudflare.steamstatic.com/economy/image/' + \
                         asset["icon_url"]
                     image_big_url = 'https://community.cloudflare.steamstatic.com/economy/image/' + \
-                        asset["icon_url_large"]
+                        asset.get("icon_url_large", "NOIMAGE")
                 else:
                     continue
                 newDetail = Detail.objects.create(
@@ -356,7 +356,7 @@ def process_assets(asset_list, appid):
                     newDetail.delete()
                     continue
             target_list.append({"assetID":  assetid,  "title": asset["market_hash_name"], "imageURL": (
-                'https://community.cloudflare.steamstatic.com/economy/image/' + asset["icon_url"]), "detailID": detailId, "descriptions": filtered_descriptions , "GIFTONLY" : asset["marketable"] ==False  ,"appid":appid })
+                'https://community.cloudflare.steamstatic.com/economy/image/' + asset["icon_url"]), "detailID": detailId, "descriptions": filtered_descriptions, "GIFTONLY": asset["marketable"] == False, "appid": appid})
         except Exception as e:
             print(e)
             continue
@@ -384,26 +384,51 @@ def inventory(request):
         for platform in acceptedPlatforms:
             appid = platform[0]
             platformInvetory = []
-            url = (
-                f'''https://api.steampowered.com/IEconService/GetInventoryItemsWithDescriptions/v1/?key={user.steamAPIKey}&steamid={user.id64}&appid={appid}&contextid=2&get_descriptions=true''')
-            try:
-                response = requests.get(url=url)
-                assets = response.json()
-                assets = assets["response"]
-                descriptions = assets["descriptions"]
-                assets = assets["assets"]
-                for item1 in assets:
-                    for item2 in descriptions:
-                        if item1['classid'] == item2['classid'] and item1['instanceid'] == item2['instanceid']:
-                            item1.update(item2)
-                            break
-                platformInvetory = process_assets(
-                    assets, appid)
+            if appid != 730:
+                try:
+                    url = (
+                        f'''https://api.steampowered.com/IEconService/GetInventoryItemsWithDescriptions/v1/?key={user.steamAPIKey}&steamid={user.id64}&appid={appid}&contextid=2&get_descriptions=true''')
+                    response = requests.get(url=url)
+                    assets = response.json()
+                    assets = assets["response"]
+                    descriptions = assets["descriptions"]
+                    assets = assets["assets"]
+                    for item1 in assets:
+                        for item2 in descriptions:
+                            if item1['classid'] == item2['classid'] and item1['instanceid'] == item2['instanceid']:
+                                item1.update(item2)
+                                break
+                    platformInvetory = process_assets(
+                        assets, appid)
+                    invetories.append({platform[1]: platformInvetory})
+                except Exception as e:
+                    print(e)
+                    continue
+            else:
+                try:
+                    url = f"https://steamcommunity.com/inventory/{user.id64}/730/2?english=1&count=5000"
+                    response = requests.get(url=url).json()
+                    assets = response["assets"]
+                    descriptions = response["descriptions"]
+                    pattern = r'src="([^"]+)"'
+                    replacement = r'url(\1)'
+                    for description in descriptions:
+                        if description["descriptions"]:
+                            for description in description["descriptions"]:
+                                description["value"] = re.sub(
+                                    pattern, replacement, description["value"])
 
-                invetories.append({platform[1]: platformInvetory})
-            except Exception as e:
-                print(e)
-                continue
+                    for item1 in assets:
+                        for item2 in descriptions:
+                            if item1['classid'] == item2['classid'] and item1['instanceid'] == item2['instanceid']:
+                                item1.update(item2)
+                                break
+                    platformInvetory = process_assets(
+                        assets, appid)
+                    invetories.append({platform[1]: platformInvetory})
+                except Exception as e:
+                    print(e)
+                    continue
         cache.set(cache_key, invetories, 600)
         data = {
             "code": "200",
@@ -452,8 +477,8 @@ def store(request):
         if not form.is_valid():
             print(form.errors)
             return JsonResponse(data)
-        creatorID=user.id
-        form.cleaned_data["creatorID"]=creatorID
+        creatorID = user.id
+        form.cleaned_data["creatorID"] = creatorID
         data = requests.post(
-            f"{PRIVATE_BACK_END_HOST}/market/products/" ,json=form.cleaned_data ).json()
+            f"{PRIVATE_BACK_END_HOST}/market/products/", json=form.cleaned_data).json()
     return JsonResponse(data)
