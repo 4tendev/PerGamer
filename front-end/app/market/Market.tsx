@@ -5,6 +5,7 @@ import { fetchapi } from "@/commonTsBrowser/fetchAPI";
 import DetailCard from "./card/DetailCard";
 import Contains from "./Contains";
 import getCookie from "@/commonTsBrowser/getCookie";
+import { SHPPING_CART_COOKIE_NAME } from "@/settings";
 const Market = (props: {
   platforms: Platform[];
   market: Market;
@@ -111,10 +112,10 @@ const Market = (props: {
                   products: [...prev.products, ...response.data.products],
                   details: [...prev.details, ...response.data.details],
                 };
-          const card = getCookie("ShoppingCard");
-          const shoppingCard = card ? JSON.parse(card) : [];
+          const cart = getCookie(SHPPING_CART_COOKIE_NAME);
+          const shoppingCart = cart ? JSON.parse(cart) : [];
           newMarket.products = newMarket.products.filter(
-            (product) => !shoppingCard.includes(product.id)
+            (product) => !shoppingCart.includes(product.id)
           );
           return newMarket;
         });

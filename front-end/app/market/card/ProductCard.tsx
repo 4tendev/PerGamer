@@ -2,6 +2,7 @@
 import Descriptions from "@/app/components/product/Descriptions";
 import getCookie from "@/commonTsBrowser/getCookie";
 import setCookie from "@/commonTsBrowser/setCookie";
+import { SHPPING_CART_COOKIE_NAME } from "@/settings";
 import React, { useState } from "react";
 
 const ProductCard = (props: {
@@ -25,14 +26,14 @@ const ProductCard = (props: {
         return newMarket;
       });
     }, 300);
-    const shoppingCardString = getCookie("ShoppingCard");
-    const shoppingCard = shoppingCardString
-      ? JSON.parse(shoppingCardString)
+    const shoppingCartString = getCookie(SHPPING_CART_COOKIE_NAME);
+    const shoppingCart = shoppingCartString
+      ? JSON.parse(shoppingCartString)
       : [];
-    shoppingCard.push(product.id);
+      shoppingCart.push(product.id);
     setCookie(
-      "ShoppingCard",
-      JSON.stringify(Array.from(new Set(shoppingCard)))
+      SHPPING_CART_COOKIE_NAME,
+      JSON.stringify(Array.from(new Set(shoppingCart)))
     );
   }
   return (

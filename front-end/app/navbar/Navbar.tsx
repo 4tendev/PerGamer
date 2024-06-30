@@ -8,7 +8,7 @@ import Profile from "./Profile/Profile";
 import LinkNameSvg from "./LinkNameSvg";
 import dictionary from "./dictionary.json";
 import getLanguage from "@/commonTsServer/getLanguage";
-import ShoppingCard from "./ShopingCard/ShoppingCard";
+import ShoppingCart from "./ShopingCart/ShoppingCart";
 const Navbar = () => {
   const lang = getLanguage().lang;
   return (
@@ -17,7 +17,7 @@ const Navbar = () => {
         <div className="flex items-center grow-0 gap-2">
           <WebSiteName />
           <LinkSvg svg={navbarSvges().wallet} link="/user/wallet" />
-          <ShoppingCard />
+          <ShoppingCart />
         </div>
         <ul className="flex  text-xs sm:static fixed left-0 bottom-0 w-full sm:w-fit justify-center h-8 sm:h-14 items-center sm:gap-5 bg-black text-white ">
           <LinkNameSvg

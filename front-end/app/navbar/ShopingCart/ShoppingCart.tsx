@@ -4,17 +4,18 @@ import NavbarSvges from "../NavbarSvg";
 import LinkSvg from "../LinkSvg";
 import getCookie from "@/commonTsBrowser/getCookie";
 import setCookie from "@/commonTsBrowser/setCookie";
+import { SHPPING_CART_COOKIE_NAME } from "@/settings";
 
-function ShoppingCard() {
-  const [shoppingCard, setShoppingCard] = useState<Product["id"][]>([]);
+function ShoppingCart() {
+  const [shoppingCart, setShoppingCart] = useState<Product["id"][]>([]);
 
   function checkLocalStorageValue() {
-    const shoppingCardString = getCookie("ShoppingCard");
-    shoppingCardString ?? setCookie("ShoppingCard", "[]");
-    const shoppingCard = shoppingCardString
-      ? JSON.parse(shoppingCardString)
+    const shoppingCartString = getCookie(SHPPING_CART_COOKIE_NAME);
+    shoppingCartString ?? setCookie(SHPPING_CART_COOKIE_NAME, "[]");
+    const shoppingCart = shoppingCartString
+      ? JSON.parse(shoppingCartString)
       : [];
-    setShoppingCard(shoppingCard);
+    setShoppingCart(shoppingCart);
   }
 
   useEffect(() => {
@@ -29,12 +30,12 @@ function ShoppingCard() {
     <div className="relative">
       <span className="absolute bottom-[30px]  rounded-full  start-0 ms-[18px]  font-bold shadow-lg text-accent">
         {" "}
-        {shoppingCard.length}
+        {shoppingCart.length}
       </span>
 
-      <LinkSvg svg={NavbarSvges().shoppingCard} link="/user/checkout" />
+      <LinkSvg svg={NavbarSvges().shoppingCart} link="/user/checkout" />
     </div>
   );
 }
 
-export default ShoppingCard;
+export default ShoppingCart;
