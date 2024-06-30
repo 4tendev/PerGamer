@@ -32,10 +32,11 @@ const Container = (props: { inventories: GameInventory[] }) => {
           Object.keys(inventory).map((gameTitle, index) => (
             <button
               onClick={() =>
-                setAssets({
+                {setPage(1)
+                  setAssets({
                   gameTitle: gameTitle,
                   assets: inventory[gameTitle],
-                })
+                })}
               }
               key={`${gameIndex}-${gameTitle}-${index}`}
               className={
