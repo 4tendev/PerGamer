@@ -18,10 +18,11 @@ const ProductCard = (props: {
     amount: "",
     assetName: "USDT",
   });
-  const [deliveryMethod, setDeliveryMethod] = useState( !asset.GIFTONLY ? 1 :2);
+  const [deliveryMethod, setDeliveryMethod] = useState(!asset.GIFTONLY ? 1 : 2);
   const [dayLeftToSend, setDayLeftToSend] = useState(0);
   const [fetching, setFetching] = useState(false);
   const dispatch = useAppDispatch();
+
   async function sell() {
     setFetching(true);
     await fetchapi("/user/store/", "POST", {
@@ -32,6 +33,7 @@ const ProductCard = (props: {
       descriptions: asset.descriptions,
       dayLeftToSend: dayLeftToSend,
       deliveryMethod: deliveryMethod,
+      isUnique: asset.descriptions.length >0? true: false,
     })
       .then((response) => {
         if (response.code == "200") {
@@ -45,8 +47,15 @@ const ProductCard = (props: {
 
   return (
     <div className="w-56 flex flex-col gap-3 border rounded-lg p-3 h-fit">
-      <img src={asset.imageURL} alt="" />
+
+      <div className="w-full h-[90px]  flex flex-col items-start justify-start  relative" >
+
+      <img src={asset.imageURL} alt={asset.title} />
+      <div className="absolute bottom-1.5 left-0 ">
       <Descriptions descriptions={asset.descriptions} />
+      </div>
+      </div>
+
       <div className="w-full overflow-hidden h-6">{asset.title}</div>
       <div className="flex justify-between">
         <div>can be sent in </div>
@@ -85,11 +94,8 @@ const ProductCard = (props: {
           value={deliveryMethod}
           className="select select-xs select-bordered"
         >
-        
-          {!asset.GIFTONLY   &&
-           <option value={1}>Trade</option>
-          }
-         <option value={2}>Gift</option>
+          {!asset.GIFTONLY && <option value={1}>Trade</option>}
+          <option value={2}>Gift</option>
         </select>
       </div>
       <button
