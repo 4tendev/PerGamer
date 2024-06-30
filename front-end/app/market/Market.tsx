@@ -2,8 +2,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import Filter from "./Filter";
 import { fetchapi } from "@/commonTsBrowser/fetchAPI";
-import ProductCard from "./card/ProductCard";
+import DetailCard from "./card/DetailCard";
 import Contains from "./Contains";
+import getCookie from "@/commonTsBrowser/getCookie";
 const Market = (props: {
   platforms: Platform[];
   market: Market;
@@ -23,6 +24,7 @@ const Market = (props: {
       contains: "",
       selectedTags: [],
       offset: 0,
+      trustedSellers: false,
     };
     return filter;
   }
@@ -59,6 +61,7 @@ const Market = (props: {
     contains: "",
     selectedTags: [],
     offset: 30,
+    trustedSellers: false,
   });
 
   useEffect(() => {
@@ -108,7 +111,11 @@ const Market = (props: {
                   products: [...prev.products, ...response.data.products],
                   details: [...prev.details, ...response.data.details],
                 };
-
+          const card = getCookie("ShoppingCard");
+          const shoppingCard = card ? JSON.parse(card) : [];
+          newMarket.products = newMarket.products.filter(
+            (product) => !shoppingCard.includes(product.id)
+          );
           return newMarket;
         });
       }
@@ -172,6 +179,7 @@ const Market = (props: {
   }
 
   const uniqueDetails = getUniqueObjects(market.details);
+  const uniqueProducts = getUniqueObjects(market.products);
 
   return (
     <div className="h-full flex flex-col ">
@@ -273,12 +281,13 @@ const Market = (props: {
         <div className="flex flex-wrap grow px-1 gap-3 justify-center  ">
           {market.products.length > 0
             ? uniqueDetails.map((detail: Detail) => {
-                const products = market.products.filter(
+                const products = uniqueProducts.filter(
                   (product) => product.detailID == detail.id
                 );
-                if (products.length > 0) {
+                if (uniqueProducts.length > 0) {
                   return (
-                    <ProductCard
+                    <DetailCard
+                      setMarket={setMarket}
                       key={detail.id}
                       detail={detail}
                       products={products}
