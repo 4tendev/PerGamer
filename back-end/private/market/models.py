@@ -59,7 +59,7 @@ class Product(models.Model):
         (2, "Gift"),
     ]
 
-    assetID = models.CharField(null=True, unique=True, max_length=50)
+    assetID = models.CharField( max_length=50)
     detailID = models.IntegerField()
     creatorID = models.BigIntegerField()
     status = models.IntegerField(choices=stats, default=2)

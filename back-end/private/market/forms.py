@@ -8,7 +8,7 @@ idField = forms.IntegerField(min_value=1, required=True)
 
 
 class CreateProductsForm(forms.Form):
-    assetID = forms.CharField(max_length=50, required=False)
+    assetID = forms.CharField(max_length=50, required=True)
     detailID = idField
     creatorID = idField
     amount = amountField
@@ -21,6 +21,8 @@ class CreateProductsForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+        if cleaned_data.get("deliveryMethod") and Product.objects.filter(assetID=cleaned_data.get("assetID"), status__in=[1, 2, 3], deliveryMethod=1).exists():
+            raise forms.ValidationError("Product with this assetID and delivery method already exists.")
         if not cleaned_data.get('isUnique'):
             cleaned_data["isUnique"] = False
         return cleaned_data
@@ -77,7 +79,9 @@ class ProductsForm(forms.Form):
     deliveryMethod = forms.IntegerField(required=False)
     tradeableAt = forms.DateField(required=False)
     status = forms.ChoiceField(choices=Product.stats, required=False)
+    status__in = forms.JSONField(required=False)
     detailID__in = forms.JSONField(required=False)
+    id__in = forms.JSONField(required=False)
 
     def clean(self):
         cleaned_data = super().clean()

@@ -37,7 +37,7 @@ def products(request):
         offset = request.GET.get("offset") or 0
         offset = int(offset)
         limit = 200 if form.cleaned_data.get("detailID__in") else 100
-
+        
         data = {
             "code": "200",
             "data": []
@@ -59,7 +59,6 @@ def products(request):
         form_data = json.loads(request.body)
         form = CreateProductsForm(form_data)
         if not form.is_valid():
-            print(form.errors)
             return JsonResponse(data)
 
         assetID = form.cleaned_data.get("assetID") or None
@@ -83,7 +82,6 @@ def products(request):
             "code": "200",
             "data": productData(createdProduct)
         }
-
     return JsonResponse(data)
 
 
