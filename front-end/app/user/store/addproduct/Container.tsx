@@ -60,7 +60,7 @@ const Container = (props: { inventories: GameInventory[] }) => {
               className="input block mx-3 input-bordered input-xs"
             />
           </div>
-          <div className="join flex flex-wrap my-1 px-8 gap-1 ">
+          <div className="join flex flex-wrap my-1 px-8">
             {Array.from(
               { length: Math.ceil(filteredAssets.length / 100) },
               (_, index) => index + 1
@@ -75,7 +75,7 @@ const Container = (props: { inventories: GameInventory[] }) => {
             ))}
           </div>
 
-          <div className="flex flex-wrap justify-around bg-base-100 w-full rounded-none py-5 gap-3 mx-auto p-5 grow overflow-auto">
+          <div className="flex flex-wrap justify-around bg-base-100 w-full rounded-none gap-3 mx-auto p-3 grow overflow-auto">
             {filteredAssets.length > 0 &&
               filteredAssets
                 .slice((page - 1) * 100, page * 100)
