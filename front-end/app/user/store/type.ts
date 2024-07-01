@@ -5,7 +5,9 @@ type SteamAsset = {
   imageURL: string;
   detailID: number;
   descriptions: Description[];
-  GIFTONLY :boolean
+  GIFTONLY: boolean;
+  appid: number;
+  hasNoneUniqueTag: boolean;
 };
 
 type GameInventory = {
