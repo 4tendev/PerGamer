@@ -330,13 +330,13 @@ def hasNoneUniqueTag(tags, appid):
     return False
 
 
-def process_assets(asset_list, appid ,productAssetID):
+def process_assets(asset_list, appid, productAssetID):
     target_list = []
     for asset in asset_list:
         try:
 
             assetid = asset["assetid"]
-            if assetid in productAssetID :
+            if assetid in productAssetID:
                 continue
 
             name = asset["market_hash_name"]
@@ -384,7 +384,7 @@ def process_assets(asset_list, appid ,productAssetID):
 
 
 def inventory(request):
-    user :User = request.user
+    user: User = request.user
     if not user.is_authenticated and not user.canSell:
         data = {
             "code": "400"
@@ -392,25 +392,31 @@ def inventory(request):
         return JsonResponse(data)
     method = request.method
     if method == "GET":
-        cache_key = user.id64 + "INVENTORY"
-        invetories = cache.get(cache_key)
-        if invetories is not None:
-            data = {
-                "code": "200",
-                "data": invetories
-            }
-            return JsonResponse(data)
-        invetories = []
-        productAssetID=[]
-        offset=0
-        while True :
+        productAssetID = []
+        offset = 0
+        while True:
             response = requests.get(
-                    f"{PRIVATE_BACK_END_HOST}/market/products/?creatorID={user.id}&status__in=[1,2,3]&offset={offset}").json()
-            products=response["data"]
-            productAssetID= productAssetID + [product["assetID"] for product in products]
+                f"{PRIVATE_BACK_END_HOST}/market/products/?creatorID={user.id}&status__in=[1,2,3]&offset={offset}").json()
+            products = response["data"]
+            productAssetID = productAssetID + \
+                [product["assetID"] for product in products]
             if len(products) < 100:
                 break
-            offset+=100        
+            offset += 100
+        cache_key = user.id64 + "INVENTORY"
+        inventories = cache.get(cache_key)
+        if inventories is not None:
+            for index , gameInventory  in enumerate(inventories):
+                for game , inventory in gameInventory.items() :
+                    inventories[index] [game] = [asset for asset in inventory if asset["assetID"] not in productAssetID]
+                   
+                
+            data = {
+                "code": "200",
+                "data": inventories
+            }
+            return JsonResponse(data)
+        inventories = []
         for platform in acceptedPlatforms:
             appid = platform[0]
             platformInvetory = []
@@ -429,8 +435,8 @@ def inventory(request):
                                 item1.update(item2)
                                 break
                     platformInvetory = process_assets(
-                        assets, appid ,productAssetID)
-                    invetories.append({platform[1]: platformInvetory})
+                        assets, appid, productAssetID)
+                    inventories.append({platform[1]: platformInvetory})
                 except Exception as e:
                     print(e)
                     continue
@@ -454,16 +460,16 @@ def inventory(request):
                                 item1.update(item2)
                                 break
                     platformInvetory = process_assets(
-                        assets, appid  ,productAssetID)
-                    invetories.append({platform[1]: platformInvetory})
+                        assets, appid, productAssetID)
+                    inventories.append({platform[1]: platformInvetory})
                 except Exception as e:
                     print(e)
                     continue
-        cache.set(cache_key, invetories, 600)
+        cache.set(cache_key, inventories, 600)
         data = {
             "code": "200",
 
-            "data": invetories
+            "data": inventories
         }
         return JsonResponse(data)
 
@@ -538,4 +544,3 @@ def checkout(request):
             }
         }
     return JsonResponse(data)
-
