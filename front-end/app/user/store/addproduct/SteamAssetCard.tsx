@@ -3,6 +3,7 @@ import { newAlert, serverErrorAlert } from "@/GlobalStates/Slices/alert/Slice";
 import { language } from "@/GlobalStates/Slices/languageSlice";
 import { useAppDispatch, useAppSelector } from "@/GlobalStates/hooks";
 import Descriptions from "@/app/components/product/Descriptions";
+import ImageDescriptions from "@/app/components/product/ImageDescriptions";
 import { fetchapi } from "@/commonTsBrowser/fetchAPI";
 import React, { useState } from "react";
 type PriceInput = {
@@ -18,60 +19,58 @@ const ProductCard = (props: {
     amount: "",
     assetName: "USDT",
   });
-  const [deliveryMethod, setDeliveryMethod] = useState(!asset.GIFTONLY ? 1 : 2);
+  const deliveryMethod = !asset.GIFTONLY ? 1 : 2;
   const [dayLeftToSend, setDayLeftToSend] = useState(0);
   const [fetching, setFetching] = useState(false);
   const dispatch = useAppDispatch();
-
+  function isUnique(): boolean {
+    if (deliveryMethod == 2) {
+      return false;
+    } else if (asset.descriptions.length > 0) {
+      return true;
+    } else {
+      return asset.hasNoneUniqueTag ? false : true;
+    }
+  }
   async function sell() {
     setFetching(true);
     await fetchapi("/user/store/", "POST", {
-      assetID: deliveryMethod == 1 ? asset.assetID : null,
+      assetID: asset.assetID,
       detailID: asset.detailID,
       amount: price.amount,
       assetName: price.assetName,
       descriptions: asset.descriptions,
       dayLeftToSend: dayLeftToSend,
       deliveryMethod: deliveryMethod,
-      isUnique: asset.descriptions.length > 0 ? true : false,
+      isUnique: isUnique(),
     })
       .then((response) => {
         if (response.code == "200") {
           dispatch(newAlert({ message: "OK", mode: "success", time: 3 }));
+          return;
         } else {
+          dispatch(newAlert({ message: "NOK", mode: "warning", time: 3 }));
           setFetching(false);
         }
       })
-      .catch((error) => dispatch(serverErrorAlert(lang)));
+      .catch((error) => {
+        dispatch(serverErrorAlert(lang));
+        setFetching(false);
+      });
   }
 
   return (
-    <div className="w-56 flex flex-col gap-3 border rounded-lg p-3 h-fit">
-      <div className="w-full h-[120px]  flex flex-col items-center justify-start  relative">
-        <img width={180} height={130} src={asset.imageURL} alt={asset.title} />
-        <div className="absolute bottom-1.5 left-0 ">
-          <Descriptions descriptions={asset.descriptions} />
-        </div>
-      </div>
+    <div className="w-52 flex flex-col gap-3 border rounded-lg p-3 h-fit text-xs">
+      <ImageDescriptions
+        detail={{ title: asset.title, img: asset.imageURL }}
+        product={{ descriptions: asset.descriptions }}
+      />
 
-      <div className="w-full overflow-hidden h-6">{asset.title}</div>
-      <div className="flex justify-between">
-        <div>can be sent in </div>
-        <select
-          value={dayLeftToSend}
-          onChange={(event) => setDayLeftToSend(Number(event.target.value))}
-          className="select select-xs select-bordered"
-        >
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((day) => (
-            <option key={day} value={day}>
-              {day} day
-            </option>
-          ))}
-        </select>
-      </div>
+      <div className="w-full overflow-hidden h-6 text-base">{asset.title}</div>
       <div className="flex justify-between gap-1 w-full text-xs items-center">
         <div>you get : </div>
         <input
+          disabled={fetching}
           value={price.amount}
           onChange={(event) =>
             setPrice((prev) => ({
@@ -84,17 +83,26 @@ const ProductCard = (props: {
         />
         {price.assetName}
       </div>
+      {deliveryMethod == 1 && (
+        <div className="flex justify-between">
+          <div>can be sent in </div>
+          <select
+            value={dayLeftToSend}
+            onChange={(event) => setDayLeftToSend(Number(event.target.value))}
+            className="select select-xs select-bordered"
+          >
+            {[0, 1, 2, 3, 4, 5, 6, 7].map((day) => (
+              <option key={day} value={day}>
+                {day} day
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className="flex justify-between gap-1 w-full text-xs items-center">
         <div>Delivery method :</div>
-        <select
-          onChange={(event) => setDeliveryMethod(Number(event.target.value))}
-          value={deliveryMethod}
-          className="select select-xs select-bordered"
-        >
-          {!asset.GIFTONLY && <option value={1}>Trade</option>}
-          <option value={2}>Gift</option>
-        </select>
+        {deliveryMethod == 1 ? "Trade" : "Gift"}
       </div>
       <button
         disabled={fetching}
