@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import SteamAssetCard from "./SteamAssetCard";
 
 const Container = (props: { inventories: GameInventory[] }) => {
@@ -16,6 +16,25 @@ const Container = (props: { inventories: GameInventory[] }) => {
   const [filter, setFilter] = useState("");
   const [page, setPage] = useState(1);
 
+  useMemo(
+    () =>
+      assets.gameTitle && 
+      setAssets((prev) => {
+        const gameTitle = prev.gameTitle;
+        const inventory = inventories.find((invetory) => {
+          for (const title in invetory) {
+            return title == gameTitle;
+          }
+        }) as GameInventory;
+
+        return {
+          gameTitle: gameTitle,
+          assets: inventory[gameTitle],
+        };
+      }),
+    [inventories]
+  );
+
   const filteredAssets = assets.assets.filter((asset) =>
     asset.title.toLowerCase().includes(filter.toLowerCase())
   );
@@ -31,13 +50,13 @@ const Container = (props: { inventories: GameInventory[] }) => {
         {inventories.map((inventory, gameIndex) =>
           Object.keys(inventory).map((gameTitle, index) => (
             <button
-              onClick={() =>
-                {setPage(1)
-                  setAssets({
+              onClick={() => {
+                setPage(1);
+                setAssets({
                   gameTitle: gameTitle,
                   assets: inventory[gameTitle],
-                })}
-              }
+                });
+              }}
               key={`${gameIndex}-${gameTitle}-${index}`}
               className={
                 "btn btn-xs " +

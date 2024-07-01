@@ -47,16 +47,34 @@ const ProductCard = (props: {
       .then((response) => {
         if (response.code == "200") {
           dispatch(newAlert({ message: "OK", mode: "success", time: 3 }));
-          return;
+          props.setInventories((prev: GameInventory[]) => {
+            for (const inventory in prev) {
+              const gameInventory = prev[inventory];
+              for (const game in gameInventory) {
+                const assets = gameInventory[game];
+                const findedAsset = assets.find(
+                  (oldAsset) => oldAsset.assetID == asset.assetID
+                );
+                if (findedAsset) {
+                  const newAssets = assets.filter(
+                    (oldAsset) => oldAsset.assetID != asset.assetID
+                  );
+                  const newGameInventory = [...prev];
+                  newGameInventory[inventory][game] = newAssets;
+
+                  return newGameInventory;
+                }
+              }
+            }
+          });
         } else {
           dispatch(newAlert({ message: "NOK", mode: "warning", time: 3 }));
-          setFetching(false);
         }
       })
       .catch((error) => {
         dispatch(serverErrorAlert(lang));
-        setFetching(false);
       });
+    setFetching(false);
   }
 
   return (
