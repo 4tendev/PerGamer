@@ -1,20 +1,25 @@
 import React from "react";
 import Descriptions from "./Descriptions";
-
+import Image from "next/image";
 const ImageDescriptions = (imageDescriptions: {
   detail: { title: string; img: string };
   product: { descriptions: Description[] };
 }) => {
-  const bgImage= `url(${imageDescriptions.detail.img})`
   return (
-<div 
-  className="w-full h-[90px] flex flex-col items-start justify-start relative bg-contain bg-center bg-no-repeat rounded-md"
-  style={{ backgroundImage:bgImage, backgroundSize: 'contain' }}
->
-  <div className="absolute bottom-1 left-0.5">
-    <Descriptions descriptions={imageDescriptions.product.descriptions} />
-  </div>
-</div>
+    <div className="w-full h-[90px] flex flex-col items-start justify-start relative  rounded-md ">
+      <Image
+        alt={imageDescriptions.detail.title}
+        src={imageDescriptions.detail.img}
+        fill
+        className="h-full"
+        style={{
+          objectFit: 'contain',
+        }}
+      />
+      <div className="absolute bottom-1 left-[1px]">
+        <Descriptions descriptions={imageDescriptions.product.descriptions} />
+      </div>
+    </div>
   );
 };
 
