@@ -314,11 +314,31 @@ def get_valid_filename(filename):
     return filename
 
 
-def process_assets(asset_list, appid):
+def hasNoneUniqueTag(tags, appid):
+    tags = [tag["localized_tag_name"] for tag in tags]
+    if appid == 730:
+        noneUniqueTags = ["Container", "Key", "Agent", "Gift", "Graffiti",
+                          "Music Kit", "Pass", "Patch", "Sticker", "Tag", "Tool"]
+    elif appid == 570:
+        noneUniqueTags = ["Radiant Towers", "Ancient", "Pennant", "Player Card", "Music", "League", "Taunt", "Loading Screen", "Bundle", "Announcer", "Cursor Pack", "Misc"
+                          "Dire Tower", "Emblem", "Emoticon Tool", "Gem / Rune", "HUD Skin", "Sticker", "Retired Chest", "Sticker Capsule", "Terrain", "Tool", "Treasure", "Treasure Key", "Ward"]
+    elif appid == 440:
+        noneUniqueTags = ["Tool"]
+    common_elements = set(noneUniqueTags) & set(tags)
+    if common_elements:
+        return True
+    return False
+
+
+def process_assets(asset_list, appid ,productAssetID):
     target_list = []
     for asset in asset_list:
         try:
+
             assetid = asset["assetid"]
+            if assetid in productAssetID :
+                continue
+
             name = asset["market_hash_name"]
             tags = asset["tags"]
             descriptions = asset.get("descriptions", [])
@@ -355,7 +375,7 @@ def process_assets(asset_list, appid):
                 except Exception as e:
                     newDetail.delete()
                     continue
-            target_list.append({"assetID":  assetid,  "title": asset["market_hash_name"], "imageURL": (
+            target_list.append({"hasNoneUniqueTag": hasNoneUniqueTag(tags, appid), "assetID":  assetid,  "title": asset["market_hash_name"], "imageURL": (
                 'https://community.cloudflare.steamstatic.com/economy/image/' + asset["icon_url"]), "detailID": detailId, "descriptions": filtered_descriptions, "GIFTONLY": asset["marketable"] == False, "appid": appid})
         except Exception as e:
             print(e)
@@ -364,7 +384,7 @@ def process_assets(asset_list, appid):
 
 
 def inventory(request):
-    user = request.user
+    user :User = request.user
     if not user.is_authenticated and not user.canSell:
         data = {
             "code": "400"
@@ -381,6 +401,16 @@ def inventory(request):
             }
             return JsonResponse(data)
         invetories = []
+        productAssetID=[]
+        offset=0
+        while True :
+            response = requests.get(
+                    f"{PRIVATE_BACK_END_HOST}/market/products/?creatorID={user.id}&status__in=[1,2,3]&offset={offset}").json()
+            products=response["data"]
+            productAssetID= productAssetID + [product["assetID"] for product in products]
+            if len(products) < 100:
+                break
+            offset+=100        
         for platform in acceptedPlatforms:
             appid = platform[0]
             platformInvetory = []
@@ -399,7 +429,7 @@ def inventory(request):
                                 item1.update(item2)
                                 break
                     platformInvetory = process_assets(
-                        assets, appid)
+                        assets, appid ,productAssetID)
                     invetories.append({platform[1]: platformInvetory})
                 except Exception as e:
                     print(e)
@@ -424,7 +454,7 @@ def inventory(request):
                                 item1.update(item2)
                                 break
                     platformInvetory = process_assets(
-                        assets, appid)
+                        assets, appid  ,productAssetID)
                     invetories.append({platform[1]: platformInvetory})
                 except Exception as e:
                     print(e)
@@ -482,3 +512,30 @@ def store(request):
         data = requests.post(
             f"{PRIVATE_BACK_END_HOST}/market/products/", json=form.cleaned_data).json()
     return JsonResponse(data)
+
+
+def checkout(request):
+    data = {"code": "400"}
+    user = request.user
+    if not user.is_authenticated:
+        return JsonResponse(data)
+    shoppingCart = request.COOKIES.get('shoppingCart')
+    if not shoppingCart:
+        return JsonResponse(data)
+    method = request.method
+    if method == "GET":
+        response = requests.get(
+            f"{PRIVATE_BACK_END_HOST}/market/products/?id__in={shoppingCart}")
+        products = response.json()["data"]
+
+        detailIDs = [product["detailID"] for product in products]
+        details = Detail.objects.filter(id__in=detailIDs)
+        data = {
+            "code": "200",
+            "data": {
+                "products": products,
+                "details": [detailData(detail) for detail in details]
+            }
+        }
+    return JsonResponse(data)
+
